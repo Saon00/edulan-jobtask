@@ -16,6 +16,7 @@ dependencies:
   pinput: 
   geolocator: 
   permission_handler: 
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

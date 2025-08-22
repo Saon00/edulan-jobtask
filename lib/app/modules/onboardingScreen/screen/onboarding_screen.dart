@@ -1,6 +1,7 @@
 import 'package:eduline/app/core/app_size.dart';
 import 'package:eduline/app/core/colors.dart';
 import 'package:eduline/app/modules/onboardingScreen/controller/onboarding_controller.dart';
+import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
 import 'package:eduline/app/modules/onboardingScreen/model/onboarding_model.dart';
 import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onboardingController = Get.put(OnboardingController());
+    SplashScreenController splashScreenController =
+        Get.find<SplashScreenController>();
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: getWidth(30)),
@@ -85,10 +88,16 @@ class OnboardingScreen extends StatelessWidget {
                   width: double.infinity,
                   height: getWidth(56),
                   child: ElevatedButton(
-                    onPressed: () {
-                      onboardingController.dotIndex.value == 0
-                          ? onboardingController.nextPage()
-                          : Get.off(() => SignInScreen());
+                    onPressed: () async {
+                      // onboardingController.dotIndex.value == 0
+                      //     ? onboardingController.nextPage()
+                      //     : Get.off(() => SignInScreen()) ;
+                      if (onboardingController.dotIndex.value == 0) {
+                        onboardingController.nextPage();
+                      } else {
+                        splashScreenController.completeOnboarding();
+                        Get.off(() => SignInScreen());
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.skyblueColor,

@@ -1,7 +1,9 @@
 import 'package:eduline/app/core/app_size.dart';
 import 'package:eduline/app/core/colors.dart';
 import 'package:eduline/app/core/images.dart';
+import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/onboarding_screen.dart';
+import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,16 +17,20 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  SplashScreenController splashScreenController =
+      Get.find<SplashScreenController>();
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2)).then(
-      (value) => Get.offAll(
-        OnboardingScreen(),
-        transition: Transition.fadeIn,
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    Future.delayed(const Duration(seconds: 2), () async {
+      await splashScreenController.checkFirstTime();
+      if (splashScreenController.isFirstTime.value) {
+        Get.to(() => OnboardingScreen());
+      } else {
+        Get.to(() => SignInScreen());
+      }
+    });
   }
 
   @override
@@ -39,7 +45,10 @@ class _SplashScreenState extends State<SplashScreen> {
             // Image
             SvgPicture.asset(
               AppImages.car,
-              colorFilter: ColorFilter.mode(AppColors.skyblueColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                AppColors.skyblueColor,
+                BlendMode.srcIn,
+              ),
             ),
 
             SizedBox(height: getHeight(16)),
