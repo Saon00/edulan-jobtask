@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:eduline/app/core/colors.dart';
+import '../../../core/conts/colors.dart';
 
 class VerifyCodeController extends GetxController {
   // Timer related observables
@@ -66,7 +66,7 @@ class VerifyCodeController extends GetxController {
         'Code Sent',
         'Verification code has been sent to your email',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.skyblueColor,
+        backgroundColor: AppColors.skyBlueColor,
         colorText: Colors.white,
         duration: const Duration(seconds: 2),
         margin: const EdgeInsets.all(16),

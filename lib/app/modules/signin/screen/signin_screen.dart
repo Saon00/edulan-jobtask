@@ -1,6 +1,7 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
-import 'package:eduline/app/core/images.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../core/conts/colors.dart';
+import '../../../core/conts/images.dart';
 import 'package:eduline/app/modules/enable_location/screen/enable_location_screen.dart';
 import 'package:eduline/app/modules/forget_password/screen/forget_password_screen.dart';
 import 'package:eduline/app/modules/signin/controller/signin_controller.dart';
@@ -16,7 +17,7 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SigninController signinController = Get.put(SigninController());
+    SignInController signinController = Get.put(SignInController());
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -81,7 +82,7 @@ class SignInScreen extends StatelessWidget {
                     children: [
                       Obx(
                         () => Checkbox(
-                          activeColor: AppColors.skyblueColor,
+                          activeColor: AppColors.skyBlueColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(getWidth(6)),
                           ),
@@ -119,13 +120,22 @@ class SignInScreen extends StatelessWidget {
               ),
               SizedBox(height: getWidth(24)),
               // button
-              CustomButtonWidget(
-                buttonText: "Sign In",
-                onPressed: () {
-                  Get.to(() => EnableLocationScreen());
-                  signinController.clearFields();
-                },
-              ),
+              Obx(() {
+                return signinController.isLoading.value
+                    ? Center(
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                                        color: AppColors.skyBlueColor,
+                                        size: getWidth(50),
+                                      ),
+                    )
+                    : CustomButtonWidget(
+                  buttonText: "Sign In",
+                  onPressed: () {
+                    signinController.loginUser();
+                  },
+                );
+              }),
+
               SizedBox(height: getWidth(16)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +157,7 @@ class SignInScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: getWidth(14),
-                        color: AppColors.skyblueColor,
+                        color: AppColors.skyBlueColor,
                       ),
                     ),
                   ),

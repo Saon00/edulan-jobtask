@@ -1,5 +1,6 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import '../../../core/conts/colors.dart';
+
 import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:eduline/app/modules/signup/controller/signup_controller.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
+
   void _showSuccessPopup() {
     SuccessRegistrationPopup.show(
       onContinue: () {
@@ -98,8 +100,8 @@ class SignupScreen extends StatelessWidget {
                     () => TextFormWidget(
                       sectionTitle: "Password",
                       textEditingController:
-                          signupController
-                              .passwordController, // Use the controller from signup controller
+                          signupController.passwordController,
+                      // Use the controller from signup controller
                       hintText: "enter your password",
                       isPassword: true,
                       isPasswordVisible:
@@ -150,7 +152,7 @@ class SignupScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: getWidth(14),
-                        color: AppColors.skyblueColor,
+                        color: AppColors.skyBlueColor,
                       ),
                     ),
                   ),

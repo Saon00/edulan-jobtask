@@ -1,5 +1,5 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import '../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/language/controller/language_controller.dart';
 import 'package:eduline/app/modules/language/model/language_model.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
@@ -123,7 +123,7 @@ class LanguageSelectionScreen extends StatelessWidget {
                                                     .selectedIndex
                                                     .value ==
                                                 index
-                                            ? AppColors.skyblueColor
+                                            ? AppColors.skyBlueColor
                                             : AppColors.greyColor.withAlpha(60),
                                   ),
                                   child: Padding(

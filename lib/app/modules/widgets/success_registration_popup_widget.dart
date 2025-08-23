@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:get/get.dart';
+
+import '../../core/conts/colors.dart';
 
 class SuccessRegistrationPopup extends StatelessWidget {
   final VoidCallback onContinue;
@@ -51,7 +53,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     left: getWidth(20),
                     child: Icon(
                       Icons.star,
-                      color: AppColors.skyblueColor,
+                      color: AppColors.skyBlueColor,
                       size: getWidth(12),
                     ),
                   ),
@@ -60,7 +62,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     right: getWidth(15),
                     child: Icon(
                       Icons.star,
-                      color: AppColors.skyblueColor,
+                      color: AppColors.skyBlueColor,
                       size: getWidth(12),
                     ),
                   ),
@@ -69,7 +71,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     left: getWidth(10),
                     child: Icon(
                       Icons.star,
-                      color: AppColors.skyblueColor,
+                      color: AppColors.skyBlueColor,
                       size: getWidth(20),
                     ),
                   ),
@@ -78,7 +80,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     right: getWidth(10),
                     child: Icon(
                       Icons.star,
-                      color: AppColors.skyblueColor,
+                      color: AppColors.skyBlueColor,
                       size: getWidth(14),
                     ),
                     // child: Container(
@@ -97,7 +99,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     height: getWidth(190),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.skyblueColor.withOpacity(0.1),
+                      color: AppColors.skyBlueColor.withOpacity(0.1),
                     ),
                   ),
                   Container(
@@ -115,7 +117,7 @@ class SuccessRegistrationPopup extends StatelessWidget {
                     height: getWidth(60),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.skyblueColor,
+                      color: AppColors.skyBlueColor,
                     ),
                     child: Icon(
                       Icons.check,

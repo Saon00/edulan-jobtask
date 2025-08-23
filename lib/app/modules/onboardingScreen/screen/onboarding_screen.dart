@@ -1,5 +1,6 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import '../../../core/conts/colors.dart';
+
 import 'package:eduline/app/modules/onboardingScreen/controller/onboarding_controller.dart';
 import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
 import 'package:eduline/app/modules/onboardingScreen/model/onboarding_model.dart';
@@ -75,8 +76,8 @@ class OnboardingScreen extends StatelessWidget {
                   effect: WormEffect(
                     dotHeight: getWidth(8),
                     dotWidth: getWidth(8),
-                    activeDotColor: AppColors.skyblueColor,
-                    dotColor: AppColors.skyblueColor.withAlpha(80),
+                    activeDotColor: AppColors.skyBlueColor,
+                    dotColor: AppColors.skyBlueColor.withAlpha(80),
                   ),
                 ),
               ),
@@ -100,7 +101,7 @@ class OnboardingScreen extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.skyblueColor,
+                      backgroundColor: AppColors.skyBlueColor,
                     ),
                     child: Text(
                       onboardingController.dotIndex.value == 0

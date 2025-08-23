@@ -1,5 +1,5 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import '../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
 import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:eduline/app/modules/verify_code/controller/verify_code_controller.dart';
@@ -115,7 +115,7 @@ class VerifyCodeScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: getWidth(20)),
                 child: Center(
                   child: Pinput(
-                    length: 4,
+                    length: 6,
                     showCursor: true,
                     controller: verifyCodeController.pinController,
                     onCompleted: verifyCodeController.onPinCompleted,
@@ -185,7 +185,7 @@ class VerifyCodeScreen extends StatelessWidget {
                               fontSize: getWidth(14),
                               color:
                                   verifyCodeController.canResend.value
-                                      ? AppColors.skyblueColor
+                                      ? AppColors.skyBlueColor
                                       : AppColors.descriptionTextColor,
                               fontWeight:
                                   verifyCodeController.canResend.value

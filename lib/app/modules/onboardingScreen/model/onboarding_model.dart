@@ -1,4 +1,4 @@
-import 'package:eduline/app/core/images.dart';
+import '../../../core/conts/images.dart';
 
 class OnboardingModel {
   final String title;

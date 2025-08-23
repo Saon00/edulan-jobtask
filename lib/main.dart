@@ -1,9 +1,11 @@
 import 'package:eduline/app/bindings/app_bindings.dart';
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+
+import 'app/core/conts/colors.dart';
 
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -11,10 +13,10 @@ import 'package:get/get.dart';
 //   runApp(const MainApp());
 // }
 
-void main() {
+Future<void> main() async{
+  await GetStorage.init(); // Initialize local storage
   runApp(const MainApp());
 }
-
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

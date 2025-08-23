@@ -1,11 +1,12 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
-import 'package:eduline/app/core/images.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/modules/enable_location/controller/enable_location_controller.dart';
 import 'package:eduline/app/modules/language/screen/language_screen.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../core/conts/colors.dart';
+import '../../../core/conts/images.dart';
 
 class EnableLocationScreen extends StatelessWidget {
   const EnableLocationScreen({super.key});
