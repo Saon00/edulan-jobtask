@@ -8,7 +8,7 @@ List the main technologies, frameworks, and packages used in this project.
 - Flutter - UI Toolkit
 - Dart - Programming Language
 - GetX - State Management, Dependency Injection, Routing
-- Packages - `get` `smooth_page_indicator` `flutter_svg` `flutter_spinkit` `pinput` `geolocator` `permission_handler`
+- Packages - `get` `smooth_page_indicator` `flutter_svg` `flutter_spinkit` `pinput` `geolocator` `permission_handler` `get_storage` `loading_animation_widget`
 - Network - null
 - Design pattern - MVC
 
@@ -18,13 +18,16 @@ List the main technologies, frameworks, and packages used in this project.
 │   └───app
 │       ├───bindings
 │       ├───core
+│       │   ├───conts
+│       │   ├───models
+│       │   ├───networks
+│       │   └───services
 │       └───modules
 │           ├───enable_location
 │           │   ├───controller
 │           │   └───screen
 │           ├───forget_password
 │           │   ├───controller
-│           │   ├───model
 │           │   └───screen
 │           ├───language
 │           │   ├───controller
@@ -36,22 +39,18 @@ List the main technologies, frameworks, and packages used in this project.
 │           │   └───screen
 │           ├───reset_password
 │           │   ├───controller
-│           │   ├───model
 │           │   └───screen
 │           ├───signin
 │           │   ├───controller
-│           │   ├───model
 │           │   └───screen
 │           ├───signup
 │           │   ├───controller
-│           │   ├───model
 │           │   └───screen
 │           ├───verify_code
 │           │   ├───controller
-│           │   ├───model
 │           │   └───screen
 │           └───widgets
 ```
-
+<!--
 ### 📱Live Application for Testing Purpose
-You can download and install in your Android Phone to check this application: `build/app/outputs/flutter-apk/app-x86_64-release.apk`
+You can download and install in your Android Phone to check this application: `build/app/outputs/flutter-apk/app-x86_64-release.apk` -->
