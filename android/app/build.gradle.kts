@@ -8,7 +8,11 @@ plugins {
 android {
     namespace = "com.example.eduline"
     compileSdk = flutter.compileSdkVersion
+<<<<<<< HEAD
     ndkVersion = "29.0.13113456"
+=======
+    ndkVersion = "27.3.13750724"
+>>>>>>> eb82957025e4174332b9226eca9373375a3852e9
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

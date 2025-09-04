@@ -19,7 +19,7 @@ class AppBindings extends Bindings {
       () => SplashScreenController(Get.find<SettingsRepository>()),
     );
     Get.lazyPut(() => OnboardingController());
-    Get.lazyPut(() => SigninController());
+    Get.lazyPut(() => SignInController());
     Get.lazyPut(() => SignupController());
     Get.lazyPut(() => ForgetPasswordController());
     Get.lazyPut(() => ResetPasswordController());

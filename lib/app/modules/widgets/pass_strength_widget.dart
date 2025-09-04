@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eduline/app/core/app_size.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
 
 class PasswordStrengthWidget extends StatelessWidget {
   final int strength; // 0-5 scale

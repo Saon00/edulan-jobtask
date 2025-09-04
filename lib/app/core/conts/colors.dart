@@ -6,5 +6,6 @@ class AppColors {
   static Color greyColor = Colors.grey;
   static Color textColor = Color(0xff2D2D2D);
   static Color descriptionTextColor = Color(0xff636F85);
-  static Color skyblueColor = Color(0xff1B6EF7);
+  static Color skyBlueColor = Color(0xff1B6EF7);
+  static Color redColor = Color(0xffe33336);
 }

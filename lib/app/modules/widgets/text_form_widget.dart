@@ -1,6 +1,8 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+
 import 'package:flutter/material.dart';
+
+import '../../core/conts/colors.dart';
 
 class TextFormWidget extends StatelessWidget {
   const TextFormWidget({
@@ -54,7 +56,7 @@ class TextFormWidget extends StatelessWidget {
                             : Icons.remove_red_eye_outlined,
                       ),
                       onPressed: onTogglePasswordVisibility,
-                      color: AppColors.skyblueColor.withAlpha(150),
+                      color: AppColors.skyBlueColor.withAlpha(150),
                     )
                     : null,
             hintText: hintText,

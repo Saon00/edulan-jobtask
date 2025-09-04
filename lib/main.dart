@@ -1,6 +1,5 @@
 import 'package:eduline/app/bindings/app_bindings.dart';
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

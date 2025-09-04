@@ -1,6 +1,8 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+
 import 'package:flutter/material.dart';
+
+import '../../core/conts/colors.dart';
 
 class CustomButtonWidget extends StatelessWidget {
   const CustomButtonWidget({super.key, required this.buttonText, required this.onPressed});
@@ -16,7 +18,7 @@ class CustomButtonWidget extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.skyblueColor,
+          backgroundColor: AppColors.skyBlueColor,
         ),
         child: Text(
           buttonText,

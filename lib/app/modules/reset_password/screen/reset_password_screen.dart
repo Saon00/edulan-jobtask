@@ -1,5 +1,6 @@
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
+import '../../../core/conts/colors.dart';
+
 import 'package:eduline/app/modules/reset_password/controller/reset_password_controller.dart';
 import 'package:eduline/app/modules/verify_code/screen/verify_code_screen.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';

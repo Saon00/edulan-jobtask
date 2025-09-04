@@ -1,10 +1,10 @@
-import 'package:eduline/app/core/images.dart';
 import 'package:flutter/material.dart';
-import 'package:eduline/app/core/app_size.dart';
-import 'package:eduline/app/core/colors.dart';
+import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../core/conts/colors.dart';
+import '../../../core/conts/images.dart';
 
 class SuccessVerifyPopup extends StatelessWidget {
   final VoidCallback onContinue;
