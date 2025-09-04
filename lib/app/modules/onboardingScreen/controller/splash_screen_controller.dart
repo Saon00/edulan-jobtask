@@ -1,17 +1,18 @@
+import 'package:eduline/app/data/repositories/settings_repository.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreenController extends GetxController {
+  final SettingsRepository _settingsRepository;
+  SplashScreenController(this._settingsRepository);
+
   var isFirstTime = true.obs;
 
   Future<void> checkFirstTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isFirstTime.value = prefs.getBool('isFirstTime') ?? true;
+    isFirstTime.value = await _settingsRepository.isFirstTime();
   }
 
   Future<void> completeOnboarding() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isFirstTime', false);
+    await _settingsRepository.setOnboardingComplete();
     isFirstTime.value = false;
   }
 }

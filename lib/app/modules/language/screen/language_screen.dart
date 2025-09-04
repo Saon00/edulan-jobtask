@@ -84,7 +84,10 @@ class LanguageSelectionScreen extends StatelessWidget {
                               languageController.selectedIndex.value == index
                                   ? 2
                                   : 0,
-                          color: Colors.white,
+                          color:
+                              languageController.selectedIndex.value == index
+                                  ? AppColors.tealColor.withAlpha(300)
+                                  : Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(getWidth(10)),
                           ),

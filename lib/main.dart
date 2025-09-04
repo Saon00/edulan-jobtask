@@ -4,17 +4,17 @@ import 'package:eduline/app/core/colors.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   runApp(const MainApp());
-// }
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
   runApp(const MainApp());
 }
 
+// void main() {
+//   runApp(const MainApp());
+// }
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

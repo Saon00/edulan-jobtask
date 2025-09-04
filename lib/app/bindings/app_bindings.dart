@@ -1,3 +1,5 @@
+import 'package:eduline/app/data/repositories/settings_repository.dart';
+import 'package:eduline/app/data/repositories/settings_repository_implement.dart';
 import 'package:eduline/app/modules/enable_location/controller/enable_location_controller.dart';
 import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
 import 'package:eduline/app/modules/language/controller/language_controller.dart';
@@ -11,7 +13,11 @@ import 'package:get/get.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => SplashScreenController());
+    Get.lazyPut<SettingsRepository>(() => SettingsRepositoryImplement());
+
+    Get.lazyPut<SplashScreenController>(
+      () => SplashScreenController(Get.find<SettingsRepository>()),
+    );
     Get.lazyPut(() => OnboardingController());
     Get.lazyPut(() => SigninController());
     Get.lazyPut(() => SignupController());
