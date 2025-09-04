@@ -1,4 +1,5 @@
 abstract class SettingsRepository {
   Future<bool> isFirstTime();
-  Future<bool> setOnboardingComplete();
+  Future<void> setOnboardingComplete();
+  // Future<bool> setOnboardingComplete();
 }

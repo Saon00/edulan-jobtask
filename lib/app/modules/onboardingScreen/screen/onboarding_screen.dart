@@ -1,10 +1,7 @@
 import 'package:eduline/app/core/conts/app_size.dart';
 import '../../../core/conts/colors.dart';
-
 import 'package:eduline/app/modules/onboardingScreen/controller/onboarding_controller.dart';
-import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
 import 'package:eduline/app/modules/onboardingScreen/model/onboarding_model.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -14,9 +11,10 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingController = Get.put(OnboardingController());
-    SplashScreenController splashScreenController =
-        Get.find<SplashScreenController>();
+    // Get the controller that should already be registered in AppBindings
+    final OnboardingController onboardingController =
+        Get.find<OnboardingController>();
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: getWidth(30)),
@@ -26,25 +24,24 @@ class OnboardingScreen extends StatelessWidget {
               PageView(
                 scrollDirection: Axis.horizontal,
                 onPageChanged:
-                    (value) => onboardingController.changePage(value),
+                    onboardingController
+                        .onPageChanged, // Use the new method name
                 controller: onboardingController.pageController,
                 children: List.generate(OnboardingModel.onboardingList.length, (
                   index,
                 ) {
+                  final item = OnboardingModel.onboardingList[index];
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(height: getWidth(87)),
                       Center(
-                        child: Image.asset(
-                          OnboardingModel.onboardingList[index].image,
-                          height: getHeight(327),
-                        ),
+                        child: Image.asset(item.image, height: getHeight(327)),
                       ),
                       SizedBox(height: getWidth(40)),
                       // title
                       Text(
-                        OnboardingModel.onboardingList[index].title,
+                        item.title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: getWidth(24),
@@ -53,9 +50,9 @@ class OnboardingScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: getHeight(16)),
-                      // description,
+                      // description
                       Text(
-                        OnboardingModel.onboardingList[index].description,
+                        item.description,
                         style: TextStyle(
                           fontSize: getWidth(14),
                           color: AppColors.descriptionTextColor,
@@ -69,7 +66,7 @@ class OnboardingScreen extends StatelessWidget {
 
               // indicator
               Align(
-                alignment: Alignment(0, 0.5),
+                alignment: const Alignment(0, 0.5),
                 child: SmoothPageIndicator(
                   controller: onboardingController.pageController,
                   count: OnboardingModel.onboardingList.length,
@@ -82,31 +79,24 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              // Button
+              // Button - Simplified!
               Align(
-                alignment: Alignment(0, 0.8),
+                alignment: const Alignment(0, 0.8),
                 child: SizedBox(
                   width: double.infinity,
                   height: getWidth(56),
                   child: ElevatedButton(
-                    onPressed: () async {
-                      // onboardingController.dotIndex.value == 0
-                      //     ? onboardingController.nextPage()
-                      //     : Get.off(() => SignInScreen()) ;
-                      if (onboardingController.dotIndex.value == 0) {
-                        onboardingController.nextPage();
-                      } else {
-                        splashScreenController.completeOnboarding();
-                        Get.off(() => SignInScreen());
-                      }
-                    },
+                    onPressed:
+                        onboardingController.nextPage, // Just call nextPage!
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.skyBlueColor,
                     ),
                     child: Text(
-                      onboardingController.dotIndex.value == 0
-                          ? "Next"
-                          : "Get Started",
+                      // Check if it's the last page for button text
+                      onboardingController.currentPageIndex.value ==
+                              OnboardingModel.onboardingList.length - 1
+                          ? "Get Started"
+                          : "Next",
                       style: TextStyle(color: AppColors.whiteColor),
                     ),
                   ),

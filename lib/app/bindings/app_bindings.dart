@@ -13,12 +13,12 @@ import 'package:get/get.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<SettingsRepository>(() => SettingsRepositoryImplement());
+    Get.lazyPut<SettingsRepository>(() => SettingsRepositoryImpl());
 
     Get.lazyPut<SplashScreenController>(
       () => SplashScreenController(Get.find<SettingsRepository>()),
     );
-    Get.lazyPut(() => OnboardingController());
+    Get.lazyPut<OnboardingController>(() => OnboardingController(Get.find<SettingsRepository>()));
     Get.lazyPut(() => SignInController());
     Get.lazyPut(() => SignupController());
     Get.lazyPut(() => ForgetPasswordController());

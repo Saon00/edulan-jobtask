@@ -2,8 +2,6 @@ import 'package:eduline/app/core/conts/app_size.dart';
 import '../../../core/conts/colors.dart';
 import '../../../core/conts/images.dart';
 import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
-import 'package:eduline/app/modules/onboardingScreen/screen/onboarding_screen.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,20 +15,26 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SplashScreenController splashScreenController =
+  final SplashScreenController splashScreenController =
       Get.find<SplashScreenController>();
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () async {
-      await splashScreenController.checkFirstTime();
-      if (splashScreenController.isFirstTime.value) {
-        Get.to(() => OnboardingScreen());
-      } else {
-        Get.to(() => SignInScreen());
-      }
-    });
+    _initializeApp(); // Call the new initialization method
+  }
+
+  // New method: Clean and linear initialization sequence
+  Future<void> _initializeApp() async {
+    // 1. Wait for the 2-second splash delay
+    await Future.delayed(const Duration(seconds: 2));
+
+    // 2. Check if it's the first time (this loads the value into isFirstTime)
+    await splashScreenController.checkFirstTime();
+
+    // 3. Navigate based on the value we just loaded
+    splashScreenController
+        .navigateToAppropriateScreen(); // <- Use the NEW method
   }
 
   @override
