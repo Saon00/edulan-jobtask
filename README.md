@@ -14,42 +14,48 @@ List the main technologies, frameworks, and packages used in this project.
 
 ### 📂 Project Structure
 ```
-├───lib
-│   └───app
-│       ├───bindings
-│       ├───core
-│       │   ├───conts
-│       │   ├───models
-│       │   ├───networks
-│       │   └───services
-│       └───modules
-│           ├───enable_location
-│           │   ├───controller
-│           │   └───screen
-│           ├───forget_password
-│           │   ├───controller
-│           │   └───screen
-│           ├───language
-│           │   ├───controller
-│           │   ├───model
-│           │   └───screen
-│           ├───onboardingScreen
-│           │   ├───controller
-│           │   ├───model
-│           │   └───screen
-│           ├───reset_password
-│           │   ├───controller
-│           │   └───screen
-│           ├───signin
-│           │   ├───controller
-│           │   └───screen
-│           ├───signup
-│           │   ├───controller
-│           │   └───screen
-│           ├───verify_code
-│           │   ├───controller
-│           │   └───screen
-│           └───widgets
+└───app
+    ├───bindings
+    ├───core
+    │   ├───conts
+    │   ├───models
+    │   ├───networks
+    │   └───services
+    ├───data
+    │   └───repositories
+    └───modules
+        ├───enable_location
+        │   ├───controller
+        │   └───screen
+        ├───forget_password
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───language
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───onboardingScreen
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───reset_password
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───signin
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───signup
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        ├───verify_code
+        │   ├───controller
+        │   ├───model
+        │   └───screen
+        └───widgets
 ```
 <!--
 ### 📱Live Application for Testing Purpose
