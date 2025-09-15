@@ -14,6 +14,6 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<void> setOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyIsFirstTime, false);
-    
+
   }
 }

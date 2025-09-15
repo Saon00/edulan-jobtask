@@ -2,7 +2,6 @@ import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/conts/colors.dart';
 import '../../../core/conts/images.dart';
-import 'package:eduline/app/modules/enable_location/screen/enable_location_screen.dart';
 import 'package:eduline/app/modules/forget_password/screen/forget_password_screen.dart';
 import 'package:eduline/app/modules/signin/controller/signin_controller.dart';
 import 'package:eduline/app/modules/signup/screen/signup_screen.dart';

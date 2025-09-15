@@ -1,11 +1,12 @@
 import 'package:eduline/app/core/conts/app_size.dart';
-import '../../../core/conts/colors.dart';
-import '../../../core/conts/images.dart';
 import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+
+import '../../../core/conts/colors.dart';
+import '../../../core/conts/images.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

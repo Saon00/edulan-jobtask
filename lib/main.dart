@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
+  // runApp(ProviderScope(child: const MainApp()));
   runApp(const MainApp());
 }
 
@@ -19,6 +20,14 @@ Future<void> main() async {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
+  // riverpod
+  // @override
+  // Widget build(BuildContext context) {
+  //   AppSizes().init(context);
+  //   return MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen());
+  // }
+
+  //  getx way
   @override
   Widget build(BuildContext context) {
     AppSizes().init(context);
