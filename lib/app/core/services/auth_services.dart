@@ -1,298 +1,362 @@
-// // lib/services/auth_service.dart
-// import 'package:eduline/app/core/networks/urls.dart';
-// import 'package:eduline/app/core/services/api_services.dart';
+import 'package:eduline/app/core/services/api_services.dart';
 
-// import '../models/login_response_model.dart';
-// class AuthService {
-//   final ApiService _apiService = ApiService();
+class AuthService {
+  final ApiService _apiService = ApiService();
 
-//   // Login method
-//   Future<ApiResponse<LoginResponse>> login(String email, String password) async {
-//     try {
-//       final response = await _apiService.post<LoginResponse>(
-//         URLs.loginUrl,
-//         body: {
-//           "email": email,
-//           "password": password,
-//         },
-//         includeAuth: false, // No auth needed for login
-//         fromJson: (json) => LoginResponse.fromJson(json),
-//       );
+  // Login
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '/auth/login', // Change this endpoint as needed
+        body: {'email': email, 'password': password},
+        includeAuth: false,
+      );
 
-//       if (response.isSuccess && response.data != null) {
-//         final loginData = response.data!;
+      if (response['success']) {
+        final data = response['data'];
 
-//         // Save tokens if login is successful
-//         if (loginData.success && loginData.data != null) {
-//           await _apiService.saveToken(loginData.data!.accessToken);
+        // Extract token from your API response structure
+        // Adjust these keys based on your API response
+        final accessToken =
+            data['data']?['accessToken'] ??
+            data['accessToken'] ??
+            data['access_token'] ??
+            data['token'];
 
-//           // Save refresh token if available
-//           if (loginData.data!.refreshToken != null) {
-//             await _apiService.saveRefreshToken(loginData.data!.refreshToken!);
-//           }
-//         }
-//       }
+        final refreshToken =
+            data['data']?['refreshToken'] ??
+            data['refreshToken'] ??
+            data['refresh_token'];
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<LoginResponse>.error(message: e.message);
-//       }
-//       return ApiResponse<LoginResponse>.error(
-//         message: 'Login failed: ${e.toString()}',
-//       );
-//     }
-//   }
+        // Save tokens
+        if (accessToken != null) {
+          await _apiService.saveToken(accessToken);
+        }
+        if (refreshToken != null) {
+          await _apiService.saveRefreshToken(refreshToken);
+        }
+      }
 
-//   // Register method
-//   Future<ApiResponse<LoginResponse>> register({
-//     required String name,
-//     required String email,
-//     required String password,
-//     String? phone,
-//   }) async {
-//     try {
-//       final body = {
-//         "name": name,
-//         "email": email,
-//         "password": password,
-//       };
+      return response;
+    } catch (e) {
+      return {'success': false, 'message': 'Login failed: ${e.toString()}'};
+    }
+  }
 
-//       if (phone != null) {
-//         body["phone"] = phone;
-//       }
+  // Register
+  Future<Map<String, dynamic>> register({
+    required String name,
+    required String email,
+    required String password,
+    String? phone,
+    Map<String, dynamic>? additionalFields,
+  }) async {
+    try {
+      final body = {'name': name, 'email': email, 'password': password};
 
-//       final response = await _apiService.post<LoginResponse>(
-//         URLs.registerUrl,
-//         body: body,
-//         includeAuth: false,
-//         fromJson: (json) => LoginResponse.fromJson(json),
-//       );
+      if (phone != null) body['phone'] = phone;
+      if (additionalFields != null) {
+        additionalFields.forEach((key, value) {
+          body[key] = value;
+        });
+      }
 
-//       if (response.isSuccess && response.data != null) {
-//         final registerData = response.data!;
+      final response = await _apiService.post(
+        '/auth/register', // Change this endpoint as needed
+        body: body,
+        includeAuth: false,
+      );
 
-//         // Save tokens if registration is successful
-//         if (registerData.success && registerData.data != null) {
-//           await _apiService.saveToken(registerData.data!.accessToken);
+      if (response['success']) {
+        final data = response['data'];
 
-//           if (registerData.data!.refreshToken != null) {
-//             await _apiService.saveRefreshToken(registerData.data!.refreshToken!);
-//           }
-//         }
-//       }
+        // Extract tokens (adjust keys based on your API)
+        final accessToken =
+            data['data']?['accessToken'] ??
+            data['accessToken'] ??
+            data['access_token'] ??
+            data['token'];
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<LoginResponse>.error(message: e.message);
-//       }
-//       return ApiResponse<LoginResponse>.error(
-//         message: 'Registration failed: ${e.toString()}',
-//       );
-//     }
-//   }
+        final refreshToken =
+            data['data']?['refreshToken'] ??
+            data['refreshToken'] ??
+            data['refresh_token'];
 
-//   // Forgot password
-//   Future<ApiResponse<Map<String, dynamic>>> forgotPassword(String email) async {
-//     try {
-//       final response = await _apiService.post<Map<String, dynamic>>(
-//         URLs.forgotPasswordUrl,
-//         body: {"email": email},
-//         includeAuth: false,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+        // Save tokens if available
+        if (accessToken != null) {
+          await _apiService.saveToken(accessToken);
+        }
+        if (refreshToken != null) {
+          await _apiService.saveRefreshToken(refreshToken);
+        }
+      }
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Failed to send reset email: ${e.toString()}',
-//       );
-//     }
-//   }
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Registration failed: ${e.toString()}',
+      };
+    }
+  }
 
-//   // Reset password
-//   Future<ApiResponse<Map<String, dynamic>>> resetPassword({
-//     required String token,
-//     required String newPassword,
-//   }) async {
-//     try {
-//       final response = await _apiService.post<Map<String, dynamic>>(
-//         URLs.resetPasswordUrl,
-//         body: {
-//           "token": token,
-//           "password": newPassword,
-//         },
-//         includeAuth: false,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+  // Logout
+  Future<Map<String, dynamic>> logout() async {
+    try {
+      // Optional: Call logout endpoint
+      final response = await _apiService.post('/auth/logout');
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Password reset failed: ${e.toString()}',
-//       );
-//     }
-//   }
+      // Always clear local tokens
+      await _apiService.clearTokens();
 
-//   // Change password (for logged-in users)
-//   Future<ApiResponse<Map<String, dynamic>>> changePassword({
-//     required String currentPassword,
-//     required String newPassword,
-//   }) async {
-//     try {
-//       final response = await _apiService.put<Map<String, dynamic>>(
-//         URLs.changePasswordUrl,
-//         body: {
-//           "currentPassword": currentPassword,
-//           "newPassword": newPassword,
-//         },
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+      return {'success': true, 'message': 'Logged out successfully'};
+    } catch (e) {
+      // Even if API call fails, clear local tokens
+      await _apiService.clearTokens();
+      return {'success': true, 'message': 'Logged out successfully'};
+    }
+  }
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Password change failed: ${e.toString()}',
-//       );
-//     }
-//   }
+  // Forgot Password
+  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
+    try {
+      final response = await _apiService.post(
+        '/auth/forgot-password', // Change this endpoint as needed
+        body: {'email': email},
+        includeAuth: false,
+      );
 
-//   // Get current user profile
-//   Future<ApiResponse<Map<String, dynamic>>> getUserProfile() async {
-//     try {
-//       final response = await _apiService.get<Map<String, dynamic>>(
-//         URLs.userProfileUrl,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to send reset email: ${e.toString()}',
+      };
+    }
+  }
 
-//       return response;
-//     } catch (e) {
-//       if (e is UnauthorizedException) {
-//         // Token expired, try to refresh
-//         final refreshSuccess = await _apiService.refreshTokens();
-//         if (refreshSuccess) {
-//           // Retry the request
-//           return getUserProfile();
-//         }
-//       }
+  // Reset Password
+  Future<Map<String, dynamic>> resetPassword({
+    required String token,
+    required String newPassword,
+    String? confirmPassword,
+  }) async {
+    try {
+      final body = {'token': token, 'password': newPassword};
 
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Failed to get user profile: ${e.toString()}',
-//       );
-//     }
-//   }
+      if (confirmPassword != null) {
+        body['confirmPassword'] = confirmPassword;
+      }
 
-//   // Update user profile
-//   Future<ApiResponse<Map<String, dynamic>>> updateUserProfile({
-//     String? name,
-//     String? email,
-//     String? phone,
-//   }) async {
-//     try {
-//       final body = <String, dynamic>{};
-//       if (name != null) body['name'] = name;
-//       if (email != null) body['email'] = email;
-//       if (phone != null) body['phone'] = phone;
+      final response = await _apiService.post(
+        '/auth/reset-password', // Change this endpoint as needed
+        body: body,
+        includeAuth: false,
+      );
 
-//       final response = await _apiService.put<Map<String, dynamic>>(
-//         URLs.updateProfileUrl,
-//         body: body,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Password reset failed: ${e.toString()}',
+      };
+    }
+  }
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Profile update failed: ${e.toString()}',
-//       );
-//     }
-//   }
+  // Change Password (for logged-in users)
+  Future<Map<String, dynamic>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    String? confirmPassword,
+  }) async {
+    try {
+      final body = {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      };
 
-//   // Logout
-//   Future<ApiResponse<Map<String, dynamic>>> logout() async {
-//     try {
-//       // Call logout endpoint (optional)
-//       final response = await _apiService.post<Map<String, dynamic>>(
-//         URLs.logoutUrl,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+      if (confirmPassword != null) {
+        body['confirmPassword'] = confirmPassword;
+      }
 
-//       // Clear tokens regardless of API response
-//       await _apiService.clearTokens();
+      final response = await _apiService.put(
+        '/auth/change-password', // Change this endpoint as needed
+        body: body,
+      );
 
-//       return response;
-//     } catch (e) {
-//       // Even if API call fails, clear local tokens
-//       await _apiService.clearTokens();
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Password change failed: ${e.toString()}',
+      };
+    }
+  }
 
-//       return ApiResponse<Map<String, dynamic>>.success(
-//         message: 'Logged out successfully',
-//       );
-//     }
-//   }
+  // Get User Profile
+  Future<Map<String, dynamic>> getUserProfile() async {
+    try {
+      final response = await _apiService.get(
+        '/user/profile',
+      ); // Change endpoint as needed
 
-//   // Check if user is logged in
-//   Future<bool> isLoggedIn() async {
-//     return await _apiService.isLoggedIn();
-//   }
+      // Handle token refresh if needed
+      if (!response['success'] && response['statusCode'] == 401) {
+        final refreshed = await _apiService.refreshToken();
+        if (refreshed) {
+          // Retry the request
+          return await _apiService.get('/user/profile');
+        }
+      }
 
-//   // Refresh token
-//   Future<bool> refreshToken() async {
-//     return await _apiService.refreshTokens();
-//   }
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to get user profile: ${e.toString()}',
+      };
+    }
+  }
 
-//   // Verify email (if your app has email verification)
-//   Future<ApiResponse<Map<String, dynamic>>> verifyEmail(String code) async {
-//     try {
-//       final response = await _apiService.post<Map<String, dynamic>>(
-//         URLs.verifyEmailUrl,
-//         body: {"code": code},
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+  // Update User Profile
+  Future<Map<String, dynamic>> updateUserProfile({
+    String? name,
+    String? email,
+    String? phone,
+    Map<String, dynamic>? additionalFields,
+  }) async {
+    try {
+      final body = <String, dynamic>{};
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Email verification failed: ${e.toString()}',
-//       );
-//     }
-//   }
+      if (name != null) body['name'] = name;
+      if (email != null) body['email'] = email;
+      if (phone != null) body['phone'] = phone;
+      if (additionalFields != null) body.addAll(additionalFields);
 
-//   // Resend verification email
-//   Future<ApiResponse<Map<String, dynamic>>> resendVerificationEmail() async {
-//     try {
-//       final response = await _apiService.post<Map<String, dynamic>>(
-//         URLs.resendVerificationUrl,
-//         fromJson: (json) => json as Map<String, dynamic>,
-//       );
+      final response = await _apiService.put(
+        '/user/profile', // Change this endpoint as needed
+        body: body,
+      );
 
-//       return response;
-//     } catch (e) {
-//       if (e is ApiException) {
-//         return ApiResponse<Map<String, dynamic>>.error(message: e.message);
-//       }
-//       return ApiResponse<Map<String, dynamic>>.error(
-//         message: 'Failed to resend verification email: ${e.toString()}',
-//       );
-//     }
-//   }
-// }
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Profile update failed: ${e.toString()}',
+      };
+    }
+  }
+
+  // Verify Email
+  Future<Map<String, dynamic>> verifyEmail({required String code}) async {
+    try {
+      final response = await _apiService.post(
+        '/auth/verify-email', // Change this endpoint as needed
+        body: {'code': code},
+      );
+
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Email verification failed: ${e.toString()}',
+      };
+    }
+  }
+
+  // Resend Verification Email
+  Future<Map<String, dynamic>> resendVerificationEmail() async {
+    try {
+      final response = await _apiService.post('/auth/resend-verification');
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Failed to resend verification email: ${e.toString()}',
+      };
+    }
+  }
+
+  // Check if user is logged in
+  Future<bool> isLoggedIn() async {
+    return await _apiService.isLoggedIn();
+  }
+
+  // Refresh token
+  Future<bool> refreshToken() async {
+    return await _apiService.refreshToken();
+  }
+
+  // Social Login (Google, Facebook, etc.)
+  Future<Map<String, dynamic>> socialLogin({
+    required String provider, // 'google', 'facebook', 'apple', etc.
+    required String token,
+    Map<String, String>? additionalData,
+  }) async {
+    try {
+      final body = {'provider': provider, 'token': token};
+
+      if (additionalData != null) body.addAll(additionalData);
+
+      final response = await _apiService.post(
+        '/auth/social-login', // Change this endpoint as needed
+        body: body,
+        includeAuth: false,
+      );
+
+      if (response['success']) {
+        final data = response['data'];
+
+        // Extract and save tokens
+        final accessToken =
+            data['data']?['accessToken'] ??
+            data['accessToken'] ??
+            data['access_token'] ??
+            data['token'];
+
+        final refreshToken =
+            data['data']?['refreshToken'] ??
+            data['refreshToken'] ??
+            data['refresh_token'];
+
+        if (accessToken != null) {
+          await _apiService.saveToken(accessToken);
+        }
+        if (refreshToken != null) {
+          await _apiService.saveRefreshToken(refreshToken);
+        }
+      }
+
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Social login failed: ${e.toString()}',
+      };
+    }
+  }
+
+  // Delete Account
+  Future<Map<String, dynamic>> deleteAccount({required String password}) async {
+    try {
+      final response = await _apiService.delete(
+        '/user/account', // Change this endpoint as needed
+        queryParams: {'password': password},
+      );
+
+      if (response['success']) {
+        await _apiService.clearTokens();
+      }
+
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Account deletion failed: ${e.toString()}',
+      };
+    }
+  }
+}

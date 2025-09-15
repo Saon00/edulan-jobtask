@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferences.getInstance();
-  // runApp(ProviderScope(child: const MainApp()));
   runApp(const MainApp());
 }
 

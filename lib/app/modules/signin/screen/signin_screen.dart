@@ -123,16 +123,16 @@ class SignInScreen extends StatelessWidget {
                 return signinController.isLoading.value
                     ? Center(
                       child: LoadingAnimationWidget.staggeredDotsWave(
-                                        color: AppColors.skyBlueColor,
-                                        size: getWidth(50),
-                                      ),
+                        color: AppColors.skyBlueColor,
+                        size: getWidth(50),
+                      ),
                     )
                     : CustomButtonWidget(
-                  buttonText: "Sign In",
-                  onPressed: () {
-                    signinController.loginUser();
-                  },
-                );
+                      buttonText: "Sign In",
+                      onPressed: () {
+                        signinController.loginUser();
+                      },
+                    );
               }),
 
               SizedBox(height: getWidth(16)),

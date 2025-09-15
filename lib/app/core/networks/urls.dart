@@ -1,4 +1,4 @@
 class URLs{
-  static const String baseUrl = "http://172.252.13.75:5031/api/v1";
-  static const String loginUrl = "$baseUrl/auth/login";
+  static const String baseUrl = "http://206.162.244.141:6003/api/v1";
+  static const String loginUrl = "/auth/login";
 }

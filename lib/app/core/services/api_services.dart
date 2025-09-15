@@ -1,401 +1,402 @@
-// // lib/services/api_service.dart
-// import 'dart:async';
-// import 'dart:convert';
-// import 'dart:io';
-// import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
-// import '../utils/app_config.dart';
-// import '../models/api_response.dart';
+// lib/services/api_service.dart
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:eduline/app/core/networks/urls.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
-// class ApiService {
-//   // Singleton pattern
-//   static final ApiService _instance = ApiService._internal();
-//   factory ApiService() => _instance;
-//   ApiService._internal();
+class ApiService {
+  // Singleton pattern
+  static final ApiService _instance = ApiService._internal();
+  factory ApiService() => _instance;
+  ApiService._internal();
 
-//   // Configuration
-//   static const Duration _timeout = Duration(seconds: 30);
-//   static const String _tokenKey = 'access_token';
-//   static const String _refreshTokenKey = 'refresh_token';
+  // Configuration - Change these for your project
+  static const String baseUrl = URLs.baseUrl;
+  static const Duration timeout = Duration(seconds: 15);
 
-//   // Base headers
-//   static const Map<String, String> _baseHeaders = {
-//     'Content-Type': 'application/json',
-//     'Accept': 'application/json',
-//   };
+  // Storage keys
+  static const String _accessTokenKey = 'access_token';
+  static const String _refreshTokenKey = 'refresh_token';
 
-//   // Cache for SharedPreferences
-//   SharedPreferences? _prefs;
+  // Base headers
+  static const Map<String, String> _baseHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
-//   // Initialize SharedPreferences
-//   Future<void> init() async {
-//     _prefs ??= await SharedPreferences.getInstance();
-//   }
+  // Get headers with token
+  Future<Map<String, String>> _getHeaders({bool includeAuth = true}) async {
+    final headers = Map<String, String>.from(_baseHeaders);
 
-//   // Get SharedPreferences instance
-//   Future<SharedPreferences> get _preferences async {
-//     await init();
-//     return _prefs!;
-//   }
+    if (includeAuth) {
+      final token = await getToken();
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+    }
 
-//   // Token management
-//   Future<String?> getToken() async {
-//     try {
-//       final prefs = await _preferences;
-//       return prefs.getString(_tokenKey);
-//     } catch (e) {
-//       print('Error getting token: $e');
-//       return null;
-//     }
-//   }
+    return headers;
+  }
 
-//   Future<void> saveToken(String token) async {
-//     try {
-//       final prefs = await _preferences;
-//       await prefs.setString(_tokenKey, token);
-//     } catch (e) {
-//       print('Error saving token: $e');
-//     }
-//   }
+  // Build full URL
+  String _buildUrl(String endpoint) {
+    if (endpoint.startsWith('http')) {
+      return endpoint;
+    }
+    return '$baseUrl$endpoint';
+  }
 
-//   Future<String?> getRefreshToken() async {
-//     try {
-//       final prefs = await _preferences;
-//       return prefs.getString(_refreshTokenKey);
-//     } catch (e) {
-//       print('Error getting refresh token: $e');
-//       return null;
-//     }
-//   }
+  // Token management
+  Future<void> saveToken(String token) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_accessTokenKey, token);
+    } catch (e) {
+      print('Error saving token: $e');
+    }
+  }
 
-//   Future<void> saveRefreshToken(String refreshToken) async {
-//     try {
-//       final prefs = await _preferences;
-//       await prefs.setString(_refreshTokenKey, refreshToken);
-//     } catch (e) {
-//       print('Error saving refresh token: $e');
-//     }
-//   }
+  Future<String?> getToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_accessTokenKey);
+    } catch (e) {
+      print('Error getting token: $e');
+      return null;
+    }
+  }
 
-//   Future<void> clearTokens() async {
-//     try {
-//       final prefs = await _preferences;
-//       await prefs.remove(_tokenKey);
-//       await prefs.remove(_refreshTokenKey);
-//     } catch (e) {
-//       print('Error clearing tokens: $e');
-//     }
-//   }
+  Future<void> saveRefreshToken(String refreshToken) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_refreshTokenKey, refreshToken);
+    } catch (e) {
+      print('Error saving refresh token: $e');
+    }
+  }
 
-//   Future<bool> isLoggedIn() async {
-//     final token = await getToken();
-//     return token != null && token.isNotEmpty;
-//   }
+  Future<String?> getRefreshToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_refreshTokenKey);
+    } catch (e) {
+      print('Error getting refresh token: $e');
+      return null;
+    }
+  }
 
-//   // Build headers with authentication
-//   Future<Map<String, String>> _buildHeaders({
-//     Map<String, String>? extraHeaders,
-//     bool includeAuth = true,
-//   }) async {
-//     final headers = Map<String, String>.from(_baseHeaders);
+  Future<void> clearTokens() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_accessTokenKey);
+      await prefs.remove(_refreshTokenKey);
+    } catch (e) {
+      print('Error clearing tokens: $e');
+    }
+  }
 
-//     if (includeAuth) {
-//       final token = await getToken();
-//       if (token != null && token.isNotEmpty) {
-//         headers['Authorization'] = 'Bearer $token';
-//       }
-//     }
+  Future<bool> isLoggedIn() async {
+    final token = await getToken();
+    return token != null && token.isNotEmpty;
+  }
 
-//     if (extraHeaders != null) {
-//       headers.addAll(extraHeaders);
-//     }
+  // Handle response
+  Map<String, dynamic> _handleResponse(http.Response response) {
+    final statusCode = response.statusCode;
 
-//     return headers;
-//   }
+    try {
+      final data = jsonDecode(response.body);
 
-//   // Build full URL
-//   String _buildUrl(String endpoint) {
-//     if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-//       return endpoint;
-//     }
-//     return '${AppConfig.baseUrl}$endpoint';
-//   }
+      if (statusCode >= 200 && statusCode < 300) {
+        return {
+          'success': true,
+          'data': data,
+          'message': data['message'] ?? 'Success',
+          'statusCode': statusCode,
+        };
+      } else {
+        final errorMessage =
+            data['message'] ?? data['error'] ?? 'An error occurred';
 
-//   // Generic HTTP method handler
-//   Future<ApiResponse<T>> _makeRequest<T>(
-//       String method,
-//       String endpoint, {
-//         Map<String, dynamic>? body,
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     try {
-//       // Build URL with query parameters
-//       Uri uri = Uri.parse(_buildUrl(endpoint));
-//       if (queryParams != null && queryParams.isNotEmpty) {
-//         uri = uri.replace(queryParameters: queryParams);
-//       }
+        // Handle token expiration
+        if (statusCode == 401) {
+          clearTokens();
+        }
 
-//       // Build headers
-//       final headers = await _buildHeaders(
-//         extraHeaders: extraHeaders,
-//         includeAuth: includeAuth,
-//       );
+        return {
+          'success': false,
+          'message': errorMessage,
+          'statusCode': statusCode,
+          'data': data,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Invalid response format',
+        'statusCode': statusCode,
+        'data': response.body,
+      };
+    }
+  }
 
-//       // Make HTTP request
-//       http.Response response;
-//       switch (method.toUpperCase()) {
-//         case 'GET':
-//           response = await http.get(uri, headers: headers).timeout(_timeout);
-//           break;
-//         case 'POST':
-//           response = await http
-//               .post(
-//             uri,
-//             headers: headers,
-//             body: body != null ? jsonEncode(body) : null,
-//           )
-//               .timeout(_timeout);
-//           break;
-//         case 'PUT':
-//           response = await http
-//               .put(
-//             uri,
-//             headers: headers,
-//             body: body != null ? jsonEncode(body) : null,
-//           )
-//               .timeout(_timeout);
-//           break;
-//         case 'PATCH':
-//           response = await http
-//               .patch(
-//             uri,
-//             headers: headers,
-//             body: body != null ? jsonEncode(body) : null,
-//           )
-//               .timeout(_timeout);
-//           break;
-//         case 'DELETE':
-//           response = await http.delete(uri, headers: headers).timeout(_timeout);
-//           break;
-//         default:
-//           throw ApiException('Unsupported HTTP method: $method');
-//       }
+  // Handle exceptions
+  Map<String, dynamic> _handleException(dynamic e) {
+    String message;
 
-//       return _handleResponse<T>(response, fromJson);
-//     } on SocketException {
-//       throw ApiException('No internet connection');
-//     } on TimeoutException {
-//       throw ApiException('Request timeout. Please try again.');
-//     } on HttpException {
-//       throw ApiException('Network error occurred');
-//     } on FormatException {
-//       throw ApiException('Invalid response format');
-//     } catch (e) {
-//       if (e is ApiException) rethrow;
-//       throw ApiException('Unexpected error: ${e.toString()}');
-//     }
-//   }
+    if (e is SocketException) {
+      message = 'No internet connection';
+    } else if (e is TimeoutException) {
+      message = 'Request timeout. Please try again.';
+    } else if (e is HttpException) {
+      message = 'Network error occurred';
+    } else if (e is FormatException) {
+      message = 'Invalid response format';
+    } else {
+      message = 'Unexpected error: ${e.toString()}';
+    }
 
-//   // Handle HTTP response
-//   ApiResponse<T> _handleResponse<T>(
-//       http.Response response,
-//       T Function(dynamic)? fromJson,
-//       ) {
-//     try {
-//       final dynamic responseData = jsonDecode(response.body);
+    return {'success': false, 'message': message, 'statusCode': 0};
+  }
 
-//       if (response.statusCode >= 200 && response.statusCode < 300) {
-//         // Success response
-//         T? data;
-//         if (fromJson != null && responseData != null) {
-//           data = fromJson(responseData);
-//         }
+  // GET Request
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, String>? queryParams,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
 
-//         return ApiResponse<T>.success(
-//           data: data,
-//           message: _extractMessage(responseData),
-//           statusCode: response.statusCode,
-//           rawData: responseData,
-//         );
-//       } else {
-//         // Error response
-//         final errorMessage = _extractErrorMessage(responseData);
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
 
-//         // Handle specific status codes
-//         if (response.statusCode == 401) {
-//           // Token expired or invalid
-//           clearTokens(); // Clear tokens
-//           throw UnauthorizedException(errorMessage);
-//         }
+      final headers = await _getHeaders(includeAuth: includeAuth);
 
-//         return ApiResponse<T>.error(
-//           message: errorMessage,
-//           statusCode: response.statusCode,
-//           rawData: responseData,
-//         );
-//       }
-//     } catch (e) {
-//       if (e is UnauthorizedException) rethrow;
+      final response = await http.get(uri, headers: headers).timeout(timeout);
 
-//       // JSON parsing failed
-//       return ApiResponse<T>.error(
-//         message: 'Invalid response format',
-//         statusCode: response.statusCode,
-//         rawData: response.body,
-//       );
-//     }
-//   }
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
 
-//   // Extract success message from response
-//   String _extractMessage(dynamic responseData) {
-//     if (responseData is Map<String, dynamic>) {
-//       return responseData['message'] ??
-//           responseData['msg'] ??
-//           'Success';
-//     }
-//     return 'Success';
-//   }
+  // POST Request
+  Future<Map<String, dynamic>> post(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    Map<String, String>? queryParams,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
 
-//   // Extract error message from response
-//   String _extractErrorMessage(dynamic responseData) {
-//     if (responseData is Map<String, dynamic>) {
-//       // Try different common error message keys
-//       return responseData['message'] ??
-//           responseData['error'] ??
-//           responseData['msg'] ??
-//           responseData['detail'] ??
-//           'An error occurred';
-//     } else if (responseData is String) {
-//       return responseData;
-//     }
-//     return 'An error occurred';
-//   }
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
 
-//   // Public HTTP methods
-//   Future<ApiResponse<T>> get<T>(
-//       String endpoint, {
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     return _makeRequest<T>(
-//       'GET',
-//       endpoint,
-//       queryParams: queryParams,
-//       extraHeaders: extraHeaders,
-//       includeAuth: includeAuth,
-//       fromJson: fromJson,
-//     );
-//   }
+      final headers = await _getHeaders(includeAuth: includeAuth);
 
-//   Future<ApiResponse<T>> post<T>(
-//       String endpoint, {
-//         Map<String, dynamic>? body,
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     return _makeRequest<T>(
-//       'POST',
-//       endpoint,
-//       body: body,
-//       queryParams: queryParams,
-//       extraHeaders: extraHeaders,
-//       includeAuth: includeAuth,
-//       fromJson: fromJson,
-//     );
-//   }
+      final response = await http
+          .post(
+            uri,
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(timeout);
 
-//   Future<ApiResponse<T>> put<T>(
-//       String endpoint, {
-//         Map<String, dynamic>? body,
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     return _makeRequest<T>(
-//       'PUT',
-//       endpoint,
-//       body: body,
-//       queryParams: queryParams,
-//       extraHeaders: extraHeaders,
-//       includeAuth: includeAuth,
-//       fromJson: fromJson,
-//     );
-//   }
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
 
-//   Future<ApiResponse<T>> patch<T>(
-//       String endpoint, {
-//         Map<String, dynamic>? body,
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     return _makeRequest<T>(
-//       'PATCH',
-//       endpoint,
-//       body: body,
-//       queryParams: queryParams,
-//       extraHeaders: extraHeaders,
-//       includeAuth: includeAuth,
-//       fromJson: fromJson,
-//     );
-//   }
+  // PUT Request
+  Future<Map<String, dynamic>> put(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    Map<String, String>? queryParams,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
 
-//   Future<ApiResponse<T>> delete<T>(
-//       String endpoint, {
-//         Map<String, String>? queryParams,
-//         Map<String, String>? extraHeaders,
-//         bool includeAuth = true,
-//         T Function(dynamic)? fromJson,
-//       }) async {
-//     return _makeRequest<T>(
-//       'DELETE',
-//       endpoint,
-//       queryParams: queryParams,
-//       extraHeaders: extraHeaders,
-//       includeAuth: includeAuth,
-//       fromJson: fromJson,
-//     );
-//   }
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
 
-//   // Token refresh method
-//   Future<bool> refreshTokens() async {
-//     try {
-//       final refreshToken = await getRefreshToken();
-//       if (refreshToken == null) return false;
+      final headers = await _getHeaders(includeAuth: includeAuth);
 
-//       final response = await post<Map<String, dynamic>>(
-//         '/auth/refresh',
-//         body: {'refreshToken': refreshToken},
-//         includeAuth: false,
-//       );
+      final response = await http
+          .put(
+            uri,
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(timeout);
 
-//       if (response.isSuccess && response.data != null) {
-//         final newAccessToken = response.data!['accessToken'];
-//         final newRefreshToken = response.data!['refreshToken'];
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
 
-//         if (newAccessToken != null) {
-//           await saveToken(newAccessToken);
-//         }
-//         if (newRefreshToken != null) {
-//           await saveRefreshToken(newRefreshToken);
-//         }
+  // PATCH Request
+  Future<Map<String, dynamic>> patch(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    Map<String, String>? queryParams,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
 
-//         return true;
-//       }
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
 
-//       return false;
-//     } catch (e) {
-//       print('Token refresh failed: $e');
-//       return false;
-//     }
-//   }
-// }
+      final headers = await _getHeaders(includeAuth: includeAuth);
+
+      final response = await http
+          .patch(
+            uri,
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(timeout);
+
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
+
+  // DELETE Request
+  Future<Map<String, dynamic>> delete(
+    String endpoint, {
+    Map<String, String>? queryParams,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
+
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
+
+      final headers = await _getHeaders(includeAuth: includeAuth);
+
+      final response = await http
+          .delete(uri, headers: headers)
+          .timeout(timeout);
+
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
+
+  // Refresh token method
+  Future<bool> refreshToken() async {
+    try {
+      final refreshToken = await getRefreshToken();
+      if (refreshToken == null) return false;
+
+      final response = await post(
+        '/auth/refresh',
+        body: {'refreshToken': refreshToken},
+        includeAuth: false,
+      );
+
+      if (response['success']) {
+        final data = response['data'];
+        final newAccessToken = data['accessToken'] ?? data['access_token'];
+        final newRefreshToken = data['refreshToken'] ?? data['refresh_token'];
+
+        if (newAccessToken != null) {
+          await saveToken(newAccessToken);
+        }
+        if (newRefreshToken != null) {
+          await saveRefreshToken(newRefreshToken);
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print('Token refresh failed: $e');
+      return false;
+    }
+  }
+
+  // Generic request method for special cases
+  Future<Map<String, dynamic>> request({
+    required String method,
+    required String endpoint,
+    Map<String, dynamic>? body,
+    Map<String, String>? queryParams,
+    Map<String, String>? extraHeaders,
+    bool includeAuth = true,
+  }) async {
+    try {
+      Uri uri = Uri.parse(_buildUrl(endpoint));
+
+      if (queryParams != null && queryParams.isNotEmpty) {
+        uri = uri.replace(queryParameters: queryParams);
+      }
+
+      final headers = await _getHeaders(includeAuth: includeAuth);
+      if (extraHeaders != null) {
+        headers.addAll(extraHeaders);
+      }
+
+      http.Response response;
+
+      switch (method.toUpperCase()) {
+        case 'GET':
+          response = await http.get(uri, headers: headers).timeout(timeout);
+          break;
+        case 'POST':
+          response = await http
+              .post(
+                uri,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+          break;
+        case 'PUT':
+          response = await http
+              .put(
+                uri,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+          break;
+        case 'PATCH':
+          response = await http
+              .patch(
+                uri,
+                headers: headers,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(timeout);
+          break;
+        case 'DELETE':
+          response = await http.delete(uri, headers: headers).timeout(timeout);
+          break;
+        default:
+          throw Exception('Unsupported HTTP method: $method');
+      }
+
+      return _handleResponse(response);
+    } catch (e) {
+      return _handleException(e);
+    }
+  }
+}
