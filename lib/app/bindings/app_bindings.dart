@@ -8,6 +8,7 @@ import 'package:eduline/app/modules/onboardingScreen/controller/splash_screen_co
 import 'package:eduline/app/modules/reset_password/controller/reset_password_controller.dart';
 import 'package:eduline/app/modules/signin/controller/signin_controller.dart';
 import 'package:eduline/app/modules/signup/controller/signup_controller.dart';
+import 'package:eduline/app/modules/staggered_screen/controller/staggered_controller.dart';
 import 'package:get/get.dart';
 
 class AppBindings extends Bindings {
@@ -25,5 +26,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => ResetPasswordController());
     Get.lazyPut(() => LocationController());
     Get.lazyPut(() => LanguageController());
+    Get.lazyPut(() => StaggeredController());
   }
 }
