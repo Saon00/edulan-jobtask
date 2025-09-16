@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:unsplash_client/unsplash_client.dart';
 
@@ -20,12 +22,54 @@ class StaggeredController extends GetxController {
     fetchRandomPhotos();
   }
 
-  Future<void> fetchRandomPhotos() async {
+  var isLoading = false.obs;
+
+  Future<void> fetchRandomPhotos({int total = 100, int batchSize = 10}) async {
     try {
-      final response = await client.photos.random(count: 20).goAndGet();
-      photos.assignAll(response); // assign to observable list
+      isLoading.value = true;
+      // EasyLoading.show(status: 'Loading photos...');
+
+      photos.clear(); // clear old data
+
+      for (int i = 0; i < total; i += batchSize) {
+        final response =
+            await client.photos.random(count: batchSize).goAndGet();
+        photos.addAll(response);
+
+        // trigger UI update gradually
+        await Future.delayed(Duration(milliseconds: 300));
+      }
     } catch (e) {
-      print('Error fetching photos: $e');
+      debugPrint('Error fetching photos: $e');
+      EasyLoading.showError('Failed to load photos');
+    } finally {
+      isLoading.value = false;
+      // EasyLoading.dismiss();
     }
   }
+
+  // Future<void> fetchRandomPhotos() async {
+  //   try {
+  //     isLoading.value = true;
+  //     EasyLoading.show(status: 'Loading photos...');
+
+  //     final response = await client.photos.random(count: 10).goAndGet();
+  //     photos.assignAll(response);
+  //   } catch (e) {
+  //     debugPrint('Error fetching photos: $e');
+  //     EasyLoading.showError('Failed to load photos');
+  //   } finally {
+  //     isLoading.value = false;
+  //     EasyLoading.dismiss();
+  //   }
+  // }
+
+  // Future<void> fetchRandomPhotos() async {
+  //   try {
+  //     final response = await client.photos.random(count: 20).goAndGet();
+  //     photos.assignAll(response);
+  //   } catch (e) {
+  //     debugPrint('Error fetching photos: $e');
+  //   }
+  // }
 }

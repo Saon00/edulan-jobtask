@@ -17,6 +17,7 @@ Future<void> main() async {
   await SharedPreferences.getInstance();
   runApp(const MainApp());
 }
+
 void configEasyLoading() {
   EasyLoading.instance
     ..loadingStyle = EasyLoadingStyle.custom
@@ -50,7 +51,7 @@ class MainApp extends StatelessWidget {
       designSize: Size(360, 690),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (_, child){
+      builder: (_, child) {
         return GetMaterialApp(
           //   defaultTransition: Transition.fadeIn,
           //   transitionDuration: Duration(seconds: 2),
@@ -60,20 +61,20 @@ class MainApp extends StatelessWidget {
           ),
           initialBinding: AppBindings(),
           debugShowCheckedModeBanner: false,
-          home: StaggeredScreen(),
+          home: SplashScreen(),
         );
       },
     );
-    return GetMaterialApp(
-      //   defaultTransition: Transition.fadeIn,
-      //   transitionDuration: Duration(seconds: 2),
-      theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.whiteColor,
-        fontFamily: 'Poppins',
-      ),
-      initialBinding: AppBindings(),
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-    );
+    // return GetMaterialApp(
+    //   //   defaultTransition: Transition.fadeIn,
+    //   //   transitionDuration: Duration(seconds: 2),
+    //   theme: ThemeData(
+    //     scaffoldBackgroundColor: AppColors.whiteColor,
+    //     fontFamily: 'Poppins',
+    //   ),
+    //   initialBinding: AppBindings(),
+    //   debugShowCheckedModeBanner: false,
+    //   home: SplashScreen(),
+    // );
   }
 }

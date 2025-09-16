@@ -1,4 +1,5 @@
 import 'package:eduline/app/core/conts/app_size.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/conts/colors.dart';
 
 import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
@@ -74,12 +75,27 @@ class ForgetPasswordScreen extends StatelessWidget {
 
               SizedBox(height: getWidth(40)),
               // button
-              CustomButtonWidget(
-                buttonText: "Continue",
-                onPressed: () {
-                  Get.to(() => ResetPasswordScreen());
-                },
-              ),
+              Obx(() {
+                return forgetPasswordController.isLoading.value
+                    ? Center(
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                        color: AppColors.skyBlueColor,
+                        size: getWidth(50),
+                      ),
+                    )
+                    : CustomButtonWidget(
+                      buttonText: "Continue",
+                      onPressed:
+                          forgetPasswordController.sendEmail,
+                    );
+              }),
+              // Obx( () {
+              //     return CustomButtonWidget(
+              //       buttonText: "Continue",
+              //       onPressed: forgetPasswordController.isLoading.value ? null : forgetPasswordController.sendEmail,
+              //     );
+              //   }
+              // ),
               SizedBox(height: getWidth(16)),
             ],
           ),

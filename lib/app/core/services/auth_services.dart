@@ -250,6 +250,27 @@ class AuthService {
     }
   }
 
+  // Verify OTP
+  Future<Map<String, dynamic>> verifyOTP({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '/auth/verify-otp', // Change this endpoint as needed
+        body: {'email': email, 'otp': otp},
+        includeAuth: false,
+      );
+
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'OTP verification failed: ${e.toString()}',
+      };
+    }
+  }
+
   // Verify Email
   Future<Map<String, dynamic>> verifyEmail({required String code}) async {
     try {

@@ -15,8 +15,8 @@ class VerifyCodeScreen extends StatelessWidget {
   void _showSuccessPopup() {
     SuccessVerifyPopup.show(
       onContinue: () {
-        // Get.back();
-        Get.off(() => SignInScreen()); // Navigate to SignInScreen
+        Get.back();
+        // Get.off(() => SignInScreen()); // Navigate to SignInScreen
       },
     );
   }
@@ -94,9 +94,7 @@ class VerifyCodeScreen extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            forgetPasswordController
-                                .forgetPasswordEmailController
-                                .text,
+                            verifyCodeController.getMaskedEmail(),
                         style: TextStyle(
                           fontSize: getWidth(15),
                           color: AppColors.textColor,

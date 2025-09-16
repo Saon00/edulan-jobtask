@@ -1,6 +1,5 @@
 import 'package:eduline/app/core/conts/colors.dart';
 import 'package:eduline/app/core/services/auth_services.dart';
-import 'package:eduline/app/modules/enable_location/screen/enable_location_screen.dart';
 import 'package:eduline/app/modules/staggered_screen/screen/staggered_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
