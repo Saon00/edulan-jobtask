@@ -1,4 +1,5 @@
 import 'package:eduline/app/core/conts/app_size.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
 import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
@@ -203,6 +204,23 @@ class VerifyCodeScreen extends StatelessWidget {
               ),
 
               SizedBox(height: getWidth(40)),
+
+                Obx(() {
+                return forgetPasswordController.isLoading.value
+                    ? Center(
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                        color: AppColors.skyBlueColor,
+                        size: getWidth(50),
+                      ),
+                    )
+                    :  CustomButtonWidget(
+                buttonText: "Verify",
+                onPressed: () {
+                  verifyCodeController.onVerifyButtonPressed();
+                  // _showSuccessPopup();
+                },
+              );
+              }),
 
               // Verify button
               CustomButtonWidget(
