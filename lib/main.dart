@@ -2,6 +2,7 @@ import 'package:eduline/app/bindings/app_bindings.dart';
 import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/core/conts/colors.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/splash_screen.dart';
+import 'package:eduline/app/modules/reset_password/screen/reset_password_screen.dart';
 import 'package:eduline/app/modules/staggered_screen/screen/staggered_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,6 +10,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'app/modules/user_profile/view/profile.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +64,7 @@ class MainApp extends StatelessWidget {
           ),
           initialBinding: AppBindings(),
           debugShowCheckedModeBanner: false,
-          home: SplashScreen(),
+          home: Profile(),
         );
       },
     );

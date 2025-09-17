@@ -1,3 +1,7 @@
+// lib/services/auth_service.dart
+
+
+import 'package:eduline/app/core/networks/urls.dart';
 import 'package:eduline/app/core/services/api_services.dart';
 
 class AuthService {
@@ -10,8 +14,11 @@ class AuthService {
   }) async {
     try {
       final response = await _apiService.post(
-        '/auth/login', // Change this endpoint as needed
-        body: {'email': email, 'password': password},
+        URLs.loginUrl, // Change this endpoint as needed
+        body: {
+          'email': email,
+          'password': password,
+        },
         includeAuth: false,
       );
 
@@ -20,14 +27,12 @@ class AuthService {
 
         // Extract token from your API response structure
         // Adjust these keys based on your API response
-        final accessToken =
-            data['data']?['accessToken'] ??
+        final accessToken = data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken =
-            data['data']?['refreshToken'] ??
+        final refreshToken = data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
@@ -42,7 +47,10 @@ class AuthService {
 
       return response;
     } catch (e) {
-      return {'success': false, 'message': 'Login failed: ${e.toString()}'};
+      return {
+        'success': false,
+        'message': 'Login failed: ${e.toString()}',
+      };
     }
   }
 
@@ -55,7 +63,11 @@ class AuthService {
     Map<String, dynamic>? additionalFields,
   }) async {
     try {
-      final body = {'name': name, 'email': email, 'password': password};
+      final body = {
+        'name': name,
+        'email': email,
+        'password': password,
+      };
 
       if (phone != null) body['phone'] = phone;
       if (additionalFields != null) {
@@ -74,14 +86,12 @@ class AuthService {
         final data = response['data'];
 
         // Extract tokens (adjust keys based on your API)
-        final accessToken =
-            data['data']?['accessToken'] ??
+        final accessToken = data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken =
-            data['data']?['refreshToken'] ??
+        final refreshToken = data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
@@ -112,19 +122,27 @@ class AuthService {
       // Always clear local tokens
       await _apiService.clearTokens();
 
-      return {'success': true, 'message': 'Logged out successfully'};
+      return {
+        'success': true,
+        'message': 'Logged out successfully',
+      };
     } catch (e) {
       // Even if API call fails, clear local tokens
       await _apiService.clearTokens();
-      return {'success': true, 'message': 'Logged out successfully'};
+      return {
+        'success': true,
+        'message': 'Logged out successfully',
+      };
     }
   }
 
   // Forgot Password
-  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
+  Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
     try {
       final response = await _apiService.post(
-        '/auth/forgot-password', // Change this endpoint as needed
+        URLs.forgotPassword, // Change this endpoint as needed
         body: {'email': email},
         includeAuth: false,
       );
@@ -143,16 +161,25 @@ class AuthService {
     required String token,
     required String newPassword,
     String? confirmPassword,
+    String? email, // Add email parameter
   }) async {
     try {
-      final body = {'token': token, 'password': newPassword};
+      final body = {
+        'token': token,
+        'password': newPassword,
+      };
 
       if (confirmPassword != null) {
         body['confirmPassword'] = confirmPassword;
       }
 
+      // Add email if provided (some APIs require it)
+      if (email != null) {
+        body['email'] = email;
+      }
+
       final response = await _apiService.post(
-        '/auth/reset-password', // Change this endpoint as needed
+       URLs.resetPassword, // Fixed: was using wrong endpoint (URLs.verifyOTP)
         body: body,
         includeAuth: false,
       );
@@ -183,7 +210,7 @@ class AuthService {
       }
 
       final response = await _apiService.put(
-        '/auth/change-password', // Change this endpoint as needed
+        URLs.changePassword, // Change this endpoint as needed
         body: body,
       );
 
@@ -199,9 +226,7 @@ class AuthService {
   // Get User Profile
   Future<Map<String, dynamic>> getUserProfile() async {
     try {
-      final response = await _apiService.get(
-        '/user/profile',
-      ); // Change endpoint as needed
+      final response = await _apiService.get('/user/profile'); // Change endpoint as needed
 
       // Handle token refresh if needed
       if (!response['success'] && response['statusCode'] == 401) {
@@ -234,7 +259,11 @@ class AuthService {
       if (name != null) body['name'] = name;
       if (email != null) body['email'] = email;
       if (phone != null) body['phone'] = phone;
-      if (additionalFields != null) body.addAll(additionalFields);
+      if (additionalFields != null) {
+        additionalFields.forEach((key, value) {
+          body[key] = value;
+        });
+      }
 
       final response = await _apiService.put(
         '/user/profile', // Change this endpoint as needed
@@ -257,8 +286,11 @@ class AuthService {
   }) async {
     try {
       final response = await _apiService.post(
-        '/auth/verify-otp', // Change this endpoint as needed
-        body: {'email': email, 'otp': otp},
+        URLs.verifyOTP, // Change this endpoint as needed
+        body: {
+          'email': email,
+          'otp': otp,
+        },
         includeAuth: false,
       );
 
@@ -272,7 +304,9 @@ class AuthService {
   }
 
   // Verify Email
-  Future<Map<String, dynamic>> verifyEmail({required String code}) async {
+  Future<Map<String, dynamic>> verifyEmail({
+    required String code,
+  }) async {
     try {
       final response = await _apiService.post(
         '/auth/verify-email', // Change this endpoint as needed
@@ -315,12 +349,19 @@ class AuthService {
   Future<Map<String, dynamic>> socialLogin({
     required String provider, // 'google', 'facebook', 'apple', etc.
     required String token,
-    Map<String, String>? additionalData,
+    Map<String, dynamic>? additionalData,
   }) async {
     try {
-      final body = {'provider': provider, 'token': token};
+      final body = {
+        'provider': provider,
+        'token': token,
+      };
 
-      if (additionalData != null) body.addAll(additionalData);
+      if (additionalData != null) {
+        additionalData.forEach((key, value) {
+          body[key] = value;
+        });
+      }
 
       final response = await _apiService.post(
         '/auth/social-login', // Change this endpoint as needed
@@ -332,14 +373,12 @@ class AuthService {
         final data = response['data'];
 
         // Extract and save tokens
-        final accessToken =
-            data['data']?['accessToken'] ??
+        final accessToken = data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken =
-            data['data']?['refreshToken'] ??
+        final refreshToken = data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
@@ -361,7 +400,9 @@ class AuthService {
   }
 
   // Delete Account
-  Future<Map<String, dynamic>> deleteAccount({required String password}) async {
+  Future<Map<String, dynamic>> deleteAccount({
+    required String password,
+  }) async {
     try {
       final response = await _apiService.delete(
         '/user/account', // Change this endpoint as needed
