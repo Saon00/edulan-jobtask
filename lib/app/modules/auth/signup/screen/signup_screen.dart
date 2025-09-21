@@ -1,14 +1,14 @@
 import 'package:eduline/app/core/conts/app_size.dart';
-import '../../../core/conts/colors.dart';
-
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
-import 'package:eduline/app/modules/signup/controller/signup_controller.dart';
+import '../../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:eduline/app/modules/widgets/pass_strength_widget.dart';
 import 'package:eduline/app/modules/widgets/success_registration_popup_widget.dart';
-import 'package:eduline/app/modules/widgets/text_form_widget.dart'; // Add this import
+import 'package:eduline/app/modules/widgets/text_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../signin/screen/signin_screen.dart';
+import '../controller/signup_controller.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});

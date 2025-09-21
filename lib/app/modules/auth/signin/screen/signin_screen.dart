@@ -1,15 +1,16 @@
 import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../core/conts/colors.dart';
-import '../../../core/conts/images.dart';
-import 'package:eduline/app/modules/forget_password/screen/forget_password_screen.dart';
-import 'package:eduline/app/modules/signin/controller/signin_controller.dart';
-import 'package:eduline/app/modules/signup/screen/signup_screen.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:eduline/app/modules/widgets/text_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../../../core/conts/colors.dart';
+import '../../../../core/conts/images.dart';
+import '../../forget_password/screen/forget_password_screen.dart';
+import '../../signup/screen/signup_screen.dart';
+import '../controller/signin_controller.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});

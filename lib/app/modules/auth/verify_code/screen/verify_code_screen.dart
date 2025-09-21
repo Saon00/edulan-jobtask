@@ -1,13 +1,13 @@
 import 'package:eduline/app/core/conts/app_size.dart';
-import '../../../core/conts/colors.dart';
-import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
-import 'package:eduline/app/modules/verify_code/controller/verify_code_controller.dart';
-import 'package:eduline/app/modules/verify_code/screen/success_verify_popup_widget.dart';
+import 'package:eduline/app/modules/auth/verify_code/screen/success_verify_popup_widget.dart';
+import '../../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:get/get.dart';
+
+import '../../forget_password/controller/forget_password_controller.dart';
+import '../controller/verify_code_controller.dart';
 
 class VerifyCodeScreen extends StatelessWidget {
   const VerifyCodeScreen({super.key});

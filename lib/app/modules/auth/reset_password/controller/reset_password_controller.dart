@@ -1,8 +1,11 @@
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
+
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/conts/colors.dart';
-import '../../../core/services/auth_services.dart';
+import '../../../../core/conts/colors.dart';
+import '../../../../core/services/auth_services.dart';
+import '../../signin/screen/signin_screen.dart';
 
 class ResetPasswordController extends GetxController {
   // Text controllers
@@ -153,7 +156,7 @@ class ResetPasswordController extends GetxController {
 
     try {
       final response = await _authService.resetPassword(
-        token: token.value,
+        // token: token.value,
         newPassword: resetNewPasswordController.text.trim(),
         confirmPassword: resetConfirmNewPasswordController.text.trim(),
         email: email.value,
@@ -176,6 +179,7 @@ class ResetPasswordController extends GetxController {
 
         // Show success dialog and navigate to login
         _showSuccessDialog();
+        Get.to(()=> SignInScreen());
 
       } else {
         // Password reset failed

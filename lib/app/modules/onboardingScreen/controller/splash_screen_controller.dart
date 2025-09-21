@@ -1,7 +1,9 @@
 import 'package:eduline/app/data/repositories/settings_repository.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/onboarding_screen.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
+
 import 'package:get/get.dart';
+
+import '../../auth/signin/screen/signin_screen.dart';
 
 class SplashScreenController extends GetxController {
   final SettingsRepository _settingsRepository;

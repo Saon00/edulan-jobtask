@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:eduline/app/modules/reset_password/screen/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/conts/colors.dart';
-import '../../../core/services/auth_services.dart';
+
+import '../../../../core/conts/colors.dart';
+import '../../../../core/services/auth_services.dart';
+import '../../reset_password/screen/reset_password_screen.dart';
 
 class VerifyCodeController extends GetxController {
   // Timer related observables
