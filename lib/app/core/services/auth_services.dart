@@ -7,38 +7,38 @@ import 'package:eduline/app/core/services/api_services.dart';
 class AuthService {
   final ApiService _apiService = ApiService();
 
-  // Login
+// In auth_service.dart
+
+  // Modified login method
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
+    bool rememberMe = false, // Add remember me parameter
   }) async {
     try {
       final response = await _apiService.post(
-        URLs.loginUrl, // Change this endpoint as needed
-        body: {
-          'email': email,
-          'password': password,
-        },
+        '/auth/login',
+        body: {'email': email, 'password': password},
         includeAuth: false,
       );
 
       if (response['success']) {
         final data = response['data'];
 
-        // Extract token from your API response structure
-        // Adjust these keys based on your API response
-        final accessToken = data['data']?['accessToken'] ??
+        final accessToken =
+            data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken = data['data']?['refreshToken'] ??
+        final refreshToken =
+            data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
-        // Save tokens
+        // Save tokens with remember me option
         if (accessToken != null) {
-          await _apiService.saveToken(accessToken);
+          await _apiService.saveTokenWithRemember(accessToken, rememberMe);
         }
         if (refreshToken != null) {
           await _apiService.saveRefreshToken(refreshToken);
@@ -47,11 +47,15 @@ class AuthService {
 
       return response;
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Login failed: ${e.toString()}',
-      };
+      return {'success': false, 'message': 'Login failed: ${e.toString()}'};
     }
+  }
+
+  // Check if user should stay logged in
+  Future<bool> shouldStayLoggedIn() async {
+    final hasToken = await _apiService.isLoggedIn();
+    final rememberMe = await _apiService.shouldRememberMe();
+    return hasToken && rememberMe;
   }
 
   // Register
