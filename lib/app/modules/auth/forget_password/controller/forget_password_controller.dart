@@ -1,8 +1,9 @@
 import 'package:eduline/app/core/conts/colors.dart';
 import 'package:eduline/app/core/services/auth_services.dart';
-import 'package:eduline/app/modules/verify_code/screen/verify_code_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../verify_code/screen/verify_code_screen.dart';
 
 class ForgetPasswordController extends GetxController {
   var forgetPasswordEmailController = TextEditingController();
@@ -67,18 +68,14 @@ class ForgetPasswordController extends GetxController {
           response['message'] ?? "Password reset email sent successfully!",
           backgroundColor: Colors.green,
           colorText: Colors.white,
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 2),
         );
 
         // Clear the email field
         forgetPasswordEmailController.clear();
 
          Get.to(() => VerifyCodeScreen(), arguments: {'email': email}); 
-
-        // Optional: Navigate back or to a success screen
-        // Get.back(); // Go back to login screen
-        // Or show a success screen
-        // _showSuccessDialog(email);
+         
       } else {
         // Failed - show error
         errorMessage.value =
@@ -104,7 +101,7 @@ class ForgetPasswordController extends GetxController {
       isLoading.value = false;
     }
   }
-
+/*
   // Show success dialog with instructions
   void _showSuccessDialog(String email) {
     Get.dialog(
@@ -162,7 +159,7 @@ class ForgetPasswordController extends GetxController {
       ),
       barrierDismissible: false,
     );
-  }
+  }*/
 
   // Resend email (if user wants to send again)
   Future<void> resendEmail() async {

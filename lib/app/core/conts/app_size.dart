@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppSizes {
+class AppSize {
   static late MediaQueryData _mediaQueryData;
   static late double width;
   static late double height;
@@ -15,17 +15,17 @@ class AppSizes {
   }
 }
 
-double screenHeight() => AppSizes.height;
+double screenHeight() => AppSize.height;
 
-double screenWidth() => AppSizes.width;
+double screenWidth() => AppSize.width;
 
 double getHeight(double inputHeight) {
-  double screenHeight = AppSizes.height;
+  double screenHeight = AppSize.height;
   var percent = ((screenHeight / 100) * inputHeight) / screenHeight;
   return (screenHeight * percent) / 10;
 }
 
 double getWidth(double inputWidth) {
-  double screenWidth = AppSizes.width;
+  double screenWidth = AppSize.width;
   return (inputWidth / 430) * screenWidth;
 }

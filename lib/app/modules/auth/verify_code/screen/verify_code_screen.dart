@@ -1,32 +1,28 @@
 import 'package:eduline/app/core/conts/app_size.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../core/conts/colors.dart';
-import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
-import 'package:eduline/app/modules/verify_code/controller/verify_code_controller.dart';
-import 'package:eduline/app/modules/verify_code/screen/success_verify_popup_widget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:get/get.dart';
 
+import '../controller/verify_code_controller.dart';
+
 class VerifyCodeScreen extends StatelessWidget {
   const VerifyCodeScreen({super.key});
 
-  void _showSuccessPopup() {
-    SuccessVerifyPopup.show(
-      onContinue: () {
-        Get.back();
-        // Get.off(() => SignInScreen()); // Navigate to SignInScreen
-      },
-    );
-  }
+  // void _showSuccessPopup() {
+  //   SuccessVerifyPopup.show(
+  //     onContinue: () {
+  //       Get.back();
+  //       // Get.off(() => SignInScreen()); // Navigate to SignInScreen
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     // Initialize controllers
-    final ForgetPasswordController forgetPasswordController =
-        Get.find<ForgetPasswordController>();
     final VerifyCodeController verifyCodeController = Get.put(
       VerifyCodeController(),
     );
@@ -35,31 +31,30 @@ class VerifyCodeScreen extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: getWidth(24)),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: getWidth(50)),
-
+              SizedBox(height: 20.h),
               // Back button
               InkWell(
                 onTap: () => Get.back(),
                 splashColor: AppColors.greyColor.withAlpha(100),
-                borderRadius: BorderRadius.circular(getWidth(25)),
+                borderRadius: BorderRadius.circular(20.r),
                 child: Container(
-                  width: getWidth(45),
-                  height: getWidth(45),
+                  width: 30.h,
+                  height: 30.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: AppColors.greyColor.withAlpha(100),
-                      width: 1,
+                      width: 1.w,
                     ),
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new,
                     color: AppColors.textColor,
-                    size: getWidth(20),
+                    size: 15.h,
                   ),
                 ),
               ),
@@ -71,14 +66,14 @@ class VerifyCodeScreen extends StatelessWidget {
                 child: Text(
                   "Verify Code",
                   style: TextStyle(
-                    fontSize: getWidth(32),
+                    fontSize: 25.sp,
                     color: AppColors.textColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
 
-              SizedBox(height: getHeight(16)),
+              SizedBox(height: 10.h),
 
               // Description with email
               Center(
@@ -89,15 +84,14 @@ class VerifyCodeScreen extends StatelessWidget {
                       TextSpan(
                         text: 'Please enter the code we just sent to email ',
                         style: TextStyle(
-                          fontSize: getWidth(15),
+                          fontSize: 13.sp,
                           color: AppColors.descriptionTextColor,
                         ),
                       ),
                       TextSpan(
-                        text:
-                            verifyCodeController.getMaskedEmail(),
+                        text: verifyCodeController.getMaskedEmail(),
                         style: TextStyle(
-                          fontSize: getWidth(15),
+                          fontSize: 13.sp,
                           color: AppColors.textColor,
                           fontWeight: FontWeight.w500,
                         ),
@@ -107,18 +101,18 @@ class VerifyCodeScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: getWidth(30)),
+              SizedBox(height: 25.h),
 
               // PIN Input
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: getWidth(20)),
+                padding: EdgeInsets.symmetric(horizontal: 15.h),
                 child: Center(
                   child: Pinput(
                     length: 6,
                     showCursor: true,
                     controller: verifyCodeController.pinController,
                     onCompleted: verifyCodeController.onPinCompleted,
-                    obscureText: true,
+                    obscureText: false,
                     defaultPinTheme: PinTheme(
                       width: getWidth(56),
                       height: getWidth(56),
@@ -205,33 +199,16 @@ class VerifyCodeScreen extends StatelessWidget {
 
               SizedBox(height: getWidth(40)),
 
-                Obx(() {
-                return forgetPasswordController.isLoading.value
-                    ? Center(
-                      child: LoadingAnimationWidget.staggeredDotsWave(
-                        color: AppColors.skyBlueColor,
-                        size: getWidth(50),
-                      ),
-                    )
-                    :  CustomButtonWidget(
-                buttonText: "Verify",
-                onPressed: () {
-                  verifyCodeController.onVerifyButtonPressed();
-                  // _showSuccessPopup();
-                },
-              );
-              }),
-
               // Verify button
               CustomButtonWidget(
                 buttonText: "Verify",
                 onPressed: () {
                   verifyCodeController.verifyCode();
-                  _showSuccessPopup();
+                  // _showSuccessPopup();
                 },
               ),
 
-              SizedBox(height: getWidth(20)), // Bottom padding
+              // SizedBox(height: getWidth(20)), // Bottom padding
             ],
           ),
         ),

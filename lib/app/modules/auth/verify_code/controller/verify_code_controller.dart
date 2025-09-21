@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:eduline/app/modules/reset_password/screen/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/conts/colors.dart';
-import '../../../core/services/auth_services.dart';
+
+import '../../../../core/conts/colors.dart';
+import '../../../../core/services/auth_services.dart';
+import '../../reset_password/screen/reset_password_screen.dart';
 
 class VerifyCodeController extends GetxController {
   // Timer related observables
@@ -117,7 +118,9 @@ class VerifyCodeController extends GetxController {
   // Handle pin completion
   void onPinCompleted(String pin) {
     verificationCode.value = pin;
-    debugPrint('Verification code entered: $pin');
+    debugPrint('Verification code entered: ${verificationCode.value}');
+    debugPrint('Verification email entered: $email');
+    
 
     // Auto-verify when pin is complete
     if (pin.length == 6) {
@@ -128,8 +131,7 @@ class VerifyCodeController extends GetxController {
 
   // Verify the code
   Future<void> verifyCode() async {
-    if (verificationCode.value.length < 4) {
-      // Adjust length based on your OTP
+    if (verificationCode.value.length < 6) {
       Get.snackbar(
         'Error',
         'Please enter the complete verification code',
@@ -181,7 +183,7 @@ class VerifyCodeController extends GetxController {
           ResetPasswordScreen(),
           arguments: {
             'email': email.value,
-            'token': response['data']?['token'] ?? verificationCode.value,
+            // 'token': response['data']?['token'] ?? verificationCode.value,
             // Some APIs return a token after OTP verification
           },
         );

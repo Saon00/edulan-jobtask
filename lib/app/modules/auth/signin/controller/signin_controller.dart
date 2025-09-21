@@ -40,6 +40,7 @@ class SignInController extends GetxController {
       final response = await _authService.login(
         email: email,
         password: password,
+        rememberMe: isRemember.value,
       );
 
       if (response['success'] == true && response['data'] != null) {
@@ -55,7 +56,6 @@ class SignInController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   void clearFields() {
     emailController.clear();

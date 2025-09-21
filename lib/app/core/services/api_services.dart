@@ -49,6 +49,43 @@ class ApiService {
   }
 
   // Token management
+  // Save token with remember me option
+  Future<void> saveTokenWithRemember(String token, bool rememberMe) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_accessTokenKey, token);
+      await prefs.setBool('remember_me', rememberMe);
+    } catch (e) {
+      print('Error saving token with remember: $e');
+    }
+  }
+
+  // Check if user chose remember me
+  Future<bool> shouldRememberMe() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('remember_me') ?? false;
+    } catch (e) {
+      print('Error getting remember me: $e');
+      return false;
+    }
+  }
+
+  // Modified clearTokens for remember me
+  Future<void> clearTokens({bool clearRememberMe = true}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_accessTokenKey);
+      await prefs.remove(_refreshTokenKey);
+
+      if (clearRememberMe) {
+        await prefs.remove('remember_me');
+      }
+    } catch (e) {
+      print('Error clearing tokens: $e');
+    }
+  }
+
   Future<void> saveToken(String token) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -87,7 +124,8 @@ class ApiService {
     }
   }
 
-  Future<void> clearTokens() async {
+  // Original clearTokens method (deprecated - use the one above)
+  Future<void> clearTokensOld() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_accessTokenKey);
