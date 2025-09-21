@@ -1,6 +1,8 @@
 // lib/services/auth_service.dart
 
 
+import 'dart:developer';
+
 import 'package:eduline/app/core/networks/urls.dart';
 import 'package:eduline/app/core/services/api_services.dart';
 
@@ -158,14 +160,14 @@ class AuthService {
 
   // Reset Password
   Future<Map<String, dynamic>> resetPassword({
-    required String token,
+    // required String token,
     required String newPassword,
     String? confirmPassword,
     String? email, // Add email parameter
   }) async {
     try {
       final body = {
-        'token': token,
+        // 'token': token,
         'password': newPassword,
       };
 
@@ -183,7 +185,6 @@ class AuthService {
         body: body,
         includeAuth: false,
       );
-
       return response;
     } catch (e) {
       return {

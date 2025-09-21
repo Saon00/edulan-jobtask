@@ -1,13 +1,12 @@
 import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../core/conts/colors.dart';
-
-import 'package:eduline/app/modules/forget_password/controller/forget_password_controller.dart';
-import 'package:eduline/app/modules/reset_password/screen/reset_password_screen.dart';
+import '../../../../core/conts/colors.dart';
 import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
 import 'package:eduline/app/modules/widgets/text_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../controller/forget_password_controller.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
   const ForgetPasswordScreen({super.key});

@@ -1,10 +1,9 @@
 import 'package:eduline/app/core/conts/app_size.dart';
-import '../../../core/conts/colors.dart';
-import 'package:eduline/app/modules/reset_password/controller/reset_password_controller.dart';
-import 'package:eduline/app/modules/widgets/custom_button_widget.dart';
-import 'package:eduline/app/modules/widgets/text_form_widget.dart';
+import '../../../../core/conts/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../controller/reset_password_controller.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   final ResetPasswordController controller = Get.put(ResetPasswordController());
@@ -136,7 +135,7 @@ class ResetPasswordScreen extends StatelessWidget {
                     Expanded(
                       child: LinearProgressIndicator(
                         value: _getStrengthValue(strength),
-                        backgroundColor: Colors.grey[200],
+                        backgroundColor: AppColors.redColor,
                         valueColor: AlwaysStoppedAnimation<Color>(color),
                         minHeight: 4,
                       ),
@@ -148,6 +147,8 @@ class ResetPasswordScreen extends StatelessWidget {
             }),
 
             SizedBox(height: 20),
+
+
 
             // Confirm Password Field
             Text(

@@ -2,9 +2,10 @@
 import 'dart:developer';
 
 import 'package:eduline/app/data/repositories/settings_repository.dart';
-import 'package:eduline/app/modules/signin/screen/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../auth/signin/screen/signin_screen.dart';
 
 class OnboardingController extends GetxController {
   final SettingsRepository _settingsRepository;

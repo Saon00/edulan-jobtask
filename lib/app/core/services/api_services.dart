@@ -1,6 +1,7 @@
 // lib/services/api_service.dart
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:eduline/app/core/networks/urls.dart';
 import 'package:http/http.dart' as http;
@@ -33,7 +34,7 @@ class ApiService {
     if (includeAuth) {
       final token = await getToken();
       if (token != null) {
-        headers['Authorization'] = 'Bearer $token';
+        headers['Authorization'] = token;
       }
     }
 
@@ -54,7 +55,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_accessTokenKey, token);
     } catch (e) {
-      print('Error saving token: $e');
+      log('Error saving token: $e');
     }
   }
 
@@ -63,7 +64,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_accessTokenKey);
     } catch (e) {
-      print('Error getting token: $e');
+      log('Error getting token: $e');
       return null;
     }
   }
@@ -73,7 +74,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_refreshTokenKey, refreshToken);
     } catch (e) {
-      print('Error saving refresh token: $e');
+      log('Error saving refresh token: $e');
     }
   }
 
@@ -82,7 +83,7 @@ class ApiService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_refreshTokenKey);
     } catch (e) {
-      print('Error getting refresh token: $e');
+      log('Error getting refresh token: $e');
       return null;
     }
   }
@@ -93,7 +94,7 @@ class ApiService {
       await prefs.remove(_accessTokenKey);
       await prefs.remove(_refreshTokenKey);
     } catch (e) {
-      print('Error clearing tokens: $e');
+      log('Error clearing tokens: $e');
     }
   }
 
