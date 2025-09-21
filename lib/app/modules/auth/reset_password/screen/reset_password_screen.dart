@@ -13,10 +13,10 @@ class ResetPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // Added for better UX on small screens
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Better alignment
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: getWidth(50)),
             // Back button
@@ -78,50 +78,61 @@ class ResetPasswordScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8),
-            Obx(() => TextFormField(
-              controller: controller.resetNewPasswordController,
-              obscureText: !controller.isnewPasswordVisible.value,
-              decoration: InputDecoration(
-                hintText: 'Enter new password',
-                prefixIcon: Icon(Icons.lock_outlined, color: AppColors.skyBlueColor),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    controller.isnewPasswordVisible.value
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+            Obx(
+              () => TextFormField(
+                controller: controller.resetNewPasswordController,
+                obscureText: !controller.isnewPasswordVisible.value,
+                decoration: InputDecoration(
+                  hintText: 'Enter new password',
+                  prefixIcon: Icon(
+                    Icons.lock_outlined,
                     color: AppColors.skyBlueColor,
                   ),
-                  onPressed: controller.togglenewPasswordVisibility,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controller.isnewPasswordVisible.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.skyBlueColor,
+                    ),
+                    onPressed: controller.togglenewPasswordVisibility,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: AppColors.skyBlueColor,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.skyBlueColor, width: 2),
-                ),
-                filled: true,
-                fillColor: Colors.grey[50],
+                onChanged: (value) {
+                  controller.newPassword.value = value;
+                },
               ),
-              onChanged: (value) {
-                // Trigger rebuild for password strength
-                controller.resetNewPasswordController.notifyListeners();
-              },
-            )),
+            ),
 
-            // Password Strength Indicator (Fixed)
+            // Password Strength Indicator - FIXED
             Obx(() {
-              final password = controller.newPassword.value; // Use observable instead
+              final password = controller.newPassword.value;
+              if (password.isEmpty) return SizedBox(height: 24);
+
               final strength = controller.getPasswordStrength(password);
               final color = controller.getPasswordStrengthColor(password);
 
-              return password.isNotEmpty
-                  ? Container(
+              return Container(
                 margin: EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    Text('Strength: ', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                    Text(
+                      'Strength: ',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
                     Text(
                       strength,
                       style: TextStyle(
@@ -131,24 +142,20 @@ class ResetPasswordScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8),
-                    // Visual strength indicator
                     Expanded(
                       child: LinearProgressIndicator(
-                        value: _getStrengthValue(strength),
-                        backgroundColor: AppColors.redColor,
+                        value: controller.getPasswordStrengthValue(password),
+                        backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(color),
                         minHeight: 4,
                       ),
                     ),
                   ],
                 ),
-              )
-                  : SizedBox(height: 24); // Maintain spacing when empty
+              );
             }),
 
             SizedBox(height: 20),
-
-
 
             // Confirm Password Field
             Text(
@@ -160,141 +167,163 @@ class ResetPasswordScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8),
-            Obx(() => TextFormField(
-              controller: controller.resetConfirmNewPasswordController,
-              obscureText: !controller.isConfirmNewPasswordVisible.value,
-              decoration: InputDecoration(
-                hintText: 'Confirm new password',
-                prefixIcon: Icon(Icons.lock_outline, color: AppColors.skyBlueColor),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    controller.isConfirmNewPasswordVisible.value
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+            Obx(
+              () => TextFormField(
+                controller: controller.resetConfirmNewPasswordController,
+                obscureText: !controller.isConfirmNewPasswordVisible.value,
+                decoration: InputDecoration(
+                  hintText: 'Confirm new password',
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
                     color: AppColors.skyBlueColor,
                   ),
-                  onPressed: controller.toggleConfirmNewPasswordVisibility,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controller.isConfirmNewPasswordVisible.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.skyBlueColor,
+                    ),
+                    onPressed: controller.toggleConfirmNewPasswordVisibility,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: AppColors.skyBlueColor,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: AppColors.skyBlueColor, width: 2),
-                ),
-                filled: true,
-                fillColor: Colors.grey[50],
+                onChanged: (value) {
+                  controller.confirmPassword.value = value;
+                  if (controller.errorMessage.value.isNotEmpty) {
+                    controller.clearError();
+                  }
+                },
               ),
-              onChanged: (value) {
-                // Clear error when user starts typing
-                if (controller.errorMessage.value.isNotEmpty) {
-                  controller.clearError();
-                }
-              },
-            )),
+            ),
 
-
-            // Password match indicator (Also fixed)
+            // Password match indicator - FIXED
             Obx(() {
               final newPasswordText = controller.newPassword.value;
               final confirmPasswordText = controller.confirmPassword.value;
 
-              if (confirmPasswordText.isNotEmpty) {
-                final isMatch = newPasswordText == confirmPasswordText;
-                return Container(
-                  margin: EdgeInsets.only(top: 8),
-                  child: Row(
-                    children: [
-                      Icon(
-                        isMatch ? Icons.check_circle : Icons.error,
-                        size: 16,
+              if (confirmPasswordText.isEmpty) return SizedBox(height: 24);
+
+              final isMatch = newPasswordText == confirmPasswordText;
+              return Container(
+                margin: EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      isMatch ? Icons.check_circle : Icons.error,
+                      size: 16,
+                      color: isMatch ? Colors.green : Colors.red,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      isMatch ? 'Passwords match' : 'Passwords don\'t match',
+                      style: TextStyle(
+                        fontSize: 12,
                         color: isMatch ? Colors.green : Colors.red,
                       ),
-                      SizedBox(width: 4),
-                      Text(
-                        isMatch ? 'Passwords match' : 'Passwords don\'t match',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isMatch ? Colors.green : Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return SizedBox(height: 24); // Maintain spacing
+                    ),
+                  ],
+                ),
+              );
             }),
 
             SizedBox(height: 32),
 
-            // Reset Password Button
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: Obx(() => ElevatedButton(
-                onPressed: controller.isLoading.value ? null : controller.resetPassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.skyBlueColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            // Reset Password Button - FIXED to be reactive
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed:
+                      controller.isFormValid && !controller.isLoading.value
+                          ? controller.resetPassword
+                          : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        controller.isFormValid
+                            ? AppColors.skyBlueColor
+                            : Colors.grey[400],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
+                  child:
+                      controller.isLoading.value
+                          ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                          : Text(
+                            'Reset Password',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                 ),
-                child: controller.isLoading.value
-                    ? SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  ),
-                )
-                    : Text(
-                  'Reset Password',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              )),
+              ),
             ),
 
             SizedBox(height: 20),
 
             // Error Message
-            Obx(() => controller.errorMessage.value.isNotEmpty
-                ? Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.shade200),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      controller.errorMessage.value,
-                      style: TextStyle(
-                        color: Colors.red.shade700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close, size: 20),
-                    onPressed: controller.clearError,
-                    color: Colors.red.shade700,
-                  ),
-                ],
-              ),
-            )
-                : SizedBox.shrink()),
+            Obx(
+              () =>
+                  controller.errorMessage.value.isNotEmpty
+                      ? Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red.shade700,
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                controller.errorMessage.value,
+                                style: TextStyle(
+                                  color: Colors.red.shade700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close, size: 20),
+                              onPressed: controller.clearError,
+                              color: Colors.red.shade700,
+                            ),
+                          ],
+                        ),
+                      )
+                      : SizedBox.shrink(),
+            ),
 
             SizedBox(height: 20),
 
@@ -311,7 +340,11 @@ class ResetPasswordScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.blue.shade700,
+                        size: 20,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Password Requirements',
@@ -325,7 +358,9 @@ class ResetPasswordScreen extends StatelessWidget {
                   SizedBox(height: 8),
                   _buildRequirement('At least 8 characters'),
                   _buildRequirement('Contains letters and numbers'),
-                  _buildRequirement('Upper and lowercase letters (recommended)'),
+                  _buildRequirement(
+                    'Upper and lowercase letters (recommended)',
+                  ),
                   _buildRequirement('Special characters (recommended)'),
                 ],
               ),
@@ -336,31 +371,17 @@ class ResetPasswordScreen extends StatelessWidget {
     );
   }
 
-  // Helper method for password strength value
-  double _getStrengthValue(String strength) {
-    switch (strength) {
-      case 'Very Weak':
-        return 0.2;
-      case 'Weak':
-        return 0.4;
-      case 'Fair':
-        return 0.6;
-      case 'Good':
-        return 0.8;
-      case 'Strong':
-        return 1.0;
-      default:
-        return 0.0;
-    }
-  }
-
   // Helper method for password requirements
   Widget _buildRequirement(String text) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Icon(Icons.check_circle_outline, size: 16, color: Colors.blue.shade600),
+          Icon(
+            Icons.check_circle_outline,
+            size: 16,
+            color: Colors.blue.shade600,
+          ),
           SizedBox(width: 8),
           Text(
             text,

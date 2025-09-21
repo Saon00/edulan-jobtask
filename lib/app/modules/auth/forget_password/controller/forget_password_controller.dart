@@ -68,18 +68,14 @@ class ForgetPasswordController extends GetxController {
           response['message'] ?? "Password reset email sent successfully!",
           backgroundColor: Colors.green,
           colorText: Colors.white,
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 2),
         );
 
         // Clear the email field
         forgetPasswordEmailController.clear();
 
          Get.to(() => VerifyCodeScreen(), arguments: {'email': email}); 
-
-        // Optional: Navigate back or to a success screen
-        // Get.back(); // Go back to login screen
-        // Or show a success screen
-        // _showSuccessDialog(email);
+         
       } else {
         // Failed - show error
         errorMessage.value =

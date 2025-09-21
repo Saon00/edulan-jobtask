@@ -2,7 +2,6 @@ import 'package:eduline/app/bindings/app_bindings.dart';
 import 'package:eduline/app/core/conts/app_size.dart';
 import 'package:eduline/app/core/conts/colors.dart';
 import 'package:eduline/app/modules/onboardingScreen/screen/splash_screen.dart';
-import 'package:eduline/app/modules/staggered_screen/screen/staggered_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -34,7 +33,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppSizes().init(context);
+    AppSize().init(context);
     return ScreenUtilInit(
       designSize: Size(360, 690),
       minTextAdapt: true,
@@ -51,6 +50,5 @@ class MainApp extends StatelessWidget {
         );
       },
     );
-
   }
 }

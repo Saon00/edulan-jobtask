@@ -1,25 +1,19 @@
 // lib/services/auth_service.dart
-
-
-import 'dart:developer';
-
 import 'package:eduline/app/core/networks/urls.dart';
 import 'package:eduline/app/core/services/api_services.dart';
 
 class AuthService {
   final ApiService _apiService = ApiService();
 
-// In auth_service.dart
-
-  // Modified login method
+  // Login with Remember Me
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
-    bool rememberMe = false, // Add remember me parameter
+    bool rememberMe = false,
   }) async {
     try {
       final response = await _apiService.post(
-        '/auth/login',
+        URLs.loginUrl, // Change this endpoint as needed
         body: {'email': email, 'password': password},
         includeAuth: false,
       );
@@ -27,6 +21,8 @@ class AuthService {
       if (response['success']) {
         final data = response['data'];
 
+        // Extract token from your API response structure
+        // Adjust these keys based on your API response
         final accessToken =
             data['data']?['accessToken'] ??
             data['accessToken'] ??
@@ -53,13 +49,6 @@ class AuthService {
     }
   }
 
-  // Check if user should stay logged in
-  Future<bool> shouldStayLoggedIn() async {
-    final hasToken = await _apiService.isLoggedIn();
-    final rememberMe = await _apiService.shouldRememberMe();
-    return hasToken && rememberMe;
-  }
-
   // Register
   Future<Map<String, dynamic>> register({
     required String name,
@@ -69,11 +58,7 @@ class AuthService {
     Map<String, dynamic>? additionalFields,
   }) async {
     try {
-      final body = {
-        'name': name,
-        'email': email,
-        'password': password,
-      };
+      final body = {'name': name, 'email': email, 'password': password};
 
       if (phone != null) body['phone'] = phone;
       if (additionalFields != null) {
@@ -92,18 +77,20 @@ class AuthService {
         final data = response['data'];
 
         // Extract tokens (adjust keys based on your API)
-        final accessToken = data['data']?['accessToken'] ??
+        final accessToken =
+            data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken = data['data']?['refreshToken'] ??
+        final refreshToken =
+            data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
-        // Save tokens if available
+        // Save tokens if available (default rememberMe = false for registration)
         if (accessToken != null) {
-          await _apiService.saveToken(accessToken);
+          await _apiService.saveTokenWithRemember(accessToken, false);
         }
         if (refreshToken != null) {
           await _apiService.saveRefreshToken(refreshToken);
@@ -119,36 +106,35 @@ class AuthService {
     }
   }
 
-  // Logout
-  Future<Map<String, dynamic>> logout() async {
+  // Logout with option to clear remember me
+  Future<Map<String, dynamic>> logout({bool forgetMe = false}) async {
     try {
       // Optional: Call logout endpoint
       final response = await _apiService.post('/auth/logout');
 
       // Always clear local tokens
-      await _apiService.clearTokens();
+      await _apiService.clearTokens(clearRememberMe: forgetMe);
 
-      return {
-        'success': true,
-        'message': 'Logged out successfully',
-      };
+      return {'success': true, 'message': 'Logged out successfully'};
     } catch (e) {
       // Even if API call fails, clear local tokens
-      await _apiService.clearTokens();
-      return {
-        'success': true,
-        'message': 'Logged out successfully',
-      };
+      await _apiService.clearTokens(clearRememberMe: forgetMe);
+      return {'success': true, 'message': 'Logged out successfully'};
     }
   }
 
+  // Check if user should stay logged in (has token AND chose remember me)
+  Future<bool> shouldStayLoggedIn() async {
+    final hasToken = await _apiService.isLoggedIn();
+    final rememberMe = await _apiService.shouldRememberMe();
+    return hasToken && rememberMe;
+  }
+
   // Forgot Password
-  Future<Map<String, dynamic>> forgotPassword({
-    required String email,
-  }) async {
+  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
     try {
       final response = await _apiService.post(
-        URLs.forgotPassword, // Change this endpoint as needed
+        URLs.forgotPassword,
         body: {'email': email},
         includeAuth: false,
       );
@@ -162,6 +148,27 @@ class AuthService {
     }
   }
 
+  // Verify OTP
+  Future<Map<String, dynamic>> verifyOTP({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        URLs.verifyOTP, 
+        body: {'email': email, 'otp': otp},
+        includeAuth: false,
+      );
+
+      return response;
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'OTP verification failed: ${e.toString()}',
+      };
+    }
+  }
+
   // Reset Password
   Future<Map<String, dynamic>> resetPassword({
     // required String token,
@@ -170,10 +177,8 @@ class AuthService {
     String? email, // Add email parameter
   }) async {
     try {
-      final body = {
-        // 'token': token,
-        'password': newPassword,
-      };
+      // final body = {'token': token, 'password': newPassword};
+      final body = {'password': newPassword};
 
       if (confirmPassword != null) {
         body['confirmPassword'] = confirmPassword;
@@ -185,10 +190,11 @@ class AuthService {
       }
 
       final response = await _apiService.post(
-       URLs.resetPassword, // Fixed: was using wrong endpoint (URLs.verifyOTP)
+        URLs.resetPassword, // Change this endpoint as needed
         body: body,
         includeAuth: false,
       );
+
       return response;
     } catch (e) {
       return {
@@ -215,7 +221,7 @@ class AuthService {
       }
 
       final response = await _apiService.put(
-        URLs.changePassword, // Change this endpoint as needed
+        '/auth/change-password', // Change this endpoint as needed
         body: body,
       );
 
@@ -231,7 +237,9 @@ class AuthService {
   // Get User Profile
   Future<Map<String, dynamic>> getUserProfile() async {
     try {
-      final response = await _apiService.get('/user/profile'); // Change endpoint as needed
+      final response = await _apiService.get(
+        '/user/profile',
+      ); // Change endpoint as needed
 
       // Handle token refresh if needed
       if (!response['success'] && response['statusCode'] == 401) {
@@ -284,34 +292,8 @@ class AuthService {
     }
   }
 
-  // Verify OTP
-  Future<Map<String, dynamic>> verifyOTP({
-    required String email,
-    required String otp,
-  }) async {
-    try {
-      final response = await _apiService.post(
-        URLs.verifyOTP, // Change this endpoint as needed
-        body: {
-          'email': email,
-          'otp': otp,
-        },
-        includeAuth: false,
-      );
-
-      return response;
-    } catch (e) {
-      return {
-        'success': false,
-        'message': 'OTP verification failed: ${e.toString()}',
-      };
-    }
-  }
-
   // Verify Email
-  Future<Map<String, dynamic>> verifyEmail({
-    required String code,
-  }) async {
+  Future<Map<String, dynamic>> verifyEmail({required String code}) async {
     try {
       final response = await _apiService.post(
         '/auth/verify-email', // Change this endpoint as needed
@@ -355,12 +337,10 @@ class AuthService {
     required String provider, // 'google', 'facebook', 'apple', etc.
     required String token,
     Map<String, dynamic>? additionalData,
+    bool rememberMe = false,
   }) async {
     try {
-      final body = {
-        'provider': provider,
-        'token': token,
-      };
+      final body = {'provider': provider, 'token': token};
 
       if (additionalData != null) {
         additionalData.forEach((key, value) {
@@ -378,17 +358,19 @@ class AuthService {
         final data = response['data'];
 
         // Extract and save tokens
-        final accessToken = data['data']?['accessToken'] ??
+        final accessToken =
+            data['data']?['accessToken'] ??
             data['accessToken'] ??
             data['access_token'] ??
             data['token'];
 
-        final refreshToken = data['data']?['refreshToken'] ??
+        final refreshToken =
+            data['data']?['refreshToken'] ??
             data['refreshToken'] ??
             data['refresh_token'];
 
         if (accessToken != null) {
-          await _apiService.saveToken(accessToken);
+          await _apiService.saveTokenWithRemember(accessToken, rememberMe);
         }
         if (refreshToken != null) {
           await _apiService.saveRefreshToken(refreshToken);
@@ -405,9 +387,7 @@ class AuthService {
   }
 
   // Delete Account
-  Future<Map<String, dynamic>> deleteAccount({
-    required String password,
-  }) async {
+  Future<Map<String, dynamic>> deleteAccount({required String password}) async {
     try {
       final response = await _apiService.delete(
         '/user/account', // Change this endpoint as needed
@@ -415,7 +395,7 @@ class AuthService {
       );
 
       if (response['success']) {
-        await _apiService.clearTokens();
+        await _apiService.clearTokens(clearRememberMe: true);
       }
 
       return response;
@@ -425,5 +405,29 @@ class AuthService {
         'message': 'Account deletion failed: ${e.toString()}',
       };
     }
+  }
+
+  // Get remember me status
+  Future<bool> getRememberMeStatus() async {
+    return await _apiService.shouldRememberMe();
+  }
+
+  // Clear all auth data (for complete logout/app reset)
+  Future<void> clearAllAuthData() async {
+    await _apiService.clearTokens(clearRememberMe: true);
+  }
+
+  // Auto-login check (use this in your app startup)
+  Future<bool> checkAutoLogin() async {
+    final hasToken = await isLoggedIn();
+    final shouldRemember = await getRememberMeStatus();
+
+    if (hasToken && shouldRemember) {
+      // Optionally verify token is still valid
+      final profile = await getUserProfile();
+      return profile['success'] ?? false;
+    }
+
+    return false;
   }
 }

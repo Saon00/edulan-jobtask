@@ -1,6 +1,3 @@
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/conts/colors.dart';
@@ -44,7 +41,7 @@ class ResetPasswordController extends GetxController {
     resetConfirmNewPasswordController.addListener(_onConfirmPasswordChanged);
   }
 
-// Add these listener methods
+  // Add these listener methods
   void _onNewPasswordChanged() {
     newPassword.value = resetNewPasswordController.text;
     // Clear error when user starts typing
@@ -71,7 +68,6 @@ class ResetPasswordController extends GetxController {
     // resetConfirmNewPasswordController.dispose();
     super.onClose();
   }
-
 
   // Toggle password visibility
   void togglenewPasswordVisibility() {
@@ -179,8 +175,7 @@ class ResetPasswordController extends GetxController {
 
         // Show success dialog and navigate to login
         _showSuccessDialog();
-        Get.to(()=> SignInScreen());
-
+        Get.to(() => SignInScreen());
       } else {
         // Password reset failed
         errorMessage.value = response['message'] ?? "Password reset failed";
@@ -194,7 +189,6 @@ class ResetPasswordController extends GetxController {
           margin: EdgeInsets.all(16),
         );
       }
-
     } catch (e) {
       errorMessage.value = "An unexpected error occurred";
       Get.snackbar(
@@ -213,11 +207,10 @@ class ResetPasswordController extends GetxController {
 
   // Show success dialog
   void _showSuccessDialog() {
+    Future.delayed(Duration(seconds: 2)).then((_) => Get.offAll(SignInScreen()));
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
             Icon(Icons.check_circle, color: Colors.green, size: 28),
@@ -293,7 +286,8 @@ class ResetPasswordController extends GetxController {
 
     if (username.length <= 2) return email.value;
 
-    final maskedUsername = username[0] +
+    final maskedUsername =
+        username[0] +
         '*' * (username.length - 2) +
         username[username.length - 1];
 
@@ -389,7 +383,7 @@ class ResetPasswordController extends GetxController {
         confirmPassword.value.isNotEmpty &&
         _isValidPassword(newPassword.value) &&
         passwordsMatch &&
-        email.value.isNotEmpty &&
-        token.value.isNotEmpty;
+        email.value.isNotEmpty;
+    // && token.value.isNotEmpty;
   }
 }
